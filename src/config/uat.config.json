@@ -1,0 +1,90 @@
+{
+	"API_URL": "https://api.uat.usa.mysanitas.com/api",
+	"BACK_URL": "https://back.uat.kdc.mysanitas.com/api",
+	"FRONT_URL": "https://front.uat.kdc.mysanitas.com",
+	"TELADOC_URL": "https://testing.visitnow.org/3965064f-8685-43d6-8535-453474da1632/",
+	"PUBLIC_VERSION_USER": "Florida Blue",
+	"PUBLIC_VERSION_PSSWRD": "dGhlU2FmZXN0UGFzc3dvcmRFdmVy",
+	"PUBLIC_API_TOKEN": "eyJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2MzM2OTkxODIsInN1YiI6IkxPR0lOU1NPIiwiaXNzIjoiQkFDS0VORFNTTyIsInVzZXJSb2xlIjoiU1BFQ0lBTCIsImV4cGlyZUluIjotMX0.q7dXMg2K5P4Wm-YasdpYggAo2C7OXHN09s9mBZT3ayg",
+	"INTERCOM_APP_ID": "c565qjis",
+	"VIM_API_KEY": "acf2cffa-e6d8-45f5-88b6-91983c4c5d63",
+	"VIM_ENVIRONMENT": "sandbox",
+	"FB_INSURANCE_URL": "https://gwprofile.bcbsfl.com/profile/interstitial/",
+	"FB_INSURANCE_URL_ANDROID": "http://play.google.com/store/apps/details?id=com.bcbsfl.mobile.android",
+	"FB_INSURANCE_URL_IOS": "itms-apps://apps.apple.com/us/app/florida-blue/id433457624",
+	"HEALTH": {
+		"THEME": "custom_8434",
+		"EN": {
+			"USER_NAME": "keralty_test_en",
+			"PASSWORD": "fz3FJKVa6mwf",
+			"PROCEDURE_ID": "62f6a5afbf30b"
+		},
+		"ES": {
+			"USER_NAME": "keralty_test_es",
+			"PASSWORD": "fz3FJKVa6mwf",
+			"PROCEDURE_ID": "62f6a710879e4"
+		}
+	},
+	"CALL_NUMBER": "8449624362",
+	"SYMPTOM_CHECKER": {
+		"THEME": "custom_8434",
+		"LAN": {
+			"EN": {
+				"USER": "keralty_test_en",
+				"PASS": "fz3FJKVa6mwf",
+				"PROC_ID": "6078a07f044e6"
+			},
+			"ES": {
+				"USER": "keralty_test_es",
+				"PASS": "fz3FJKVa6mwf",
+				"PROC_ID": "60ff28a743e22"
+			}
+		}
+	},
+	"LIFESTYLE_LIB": {
+		"THEME": "custom_8434",
+		"ENV": "dev",
+		"LAN": {
+			"EN": {
+				"USER": "keralty_test_en",
+				"PASS": "fz3FJKVa6mwf",
+				"PROC_ID": "63c0a4e69f1c5"
+			},
+			"ES": {
+				"USER": "keralty_test_es",
+				"PASS": "fz3FJKVa6mwf",
+				"PROC_ID": "63c0a57e1f1ff"
+			}
+		},
+		"DIALOG_FLOW": {
+			"dlgflowRegion": "us-east1",
+			"dlgflowProject": "usa-kdc-qal-dialogflow-c5ed",
+			"dlgflowEnv": "keralty-qal",
+			"dlgflowSymptomAgentID": "b58825ed-0f39-418a-a1b8-5184e2035b2c"
+		}
+	},
+	"VIRTUAL_ASSISTANT": {
+		"THEME": "custom_8434",
+		"ENV": "uat",
+		"LAN": {
+			"EN": {
+				"USER": "keralty_test_en",
+				"PASS": "fz3FJKVa6mwf",
+				"PROC_ID": "619d4935edcb7"
+			},
+			"ES": {
+				"USER": "keralty_test_es",
+				"PASS": "fz3FJKVa6mwf",
+				"PROC_ID": "61a408ecdaef8"
+			}
+		},
+		"DIALOG_FLOW": {
+			"dlgflowRegion": "us-east1",
+			"dlgflowProject": "usa-kdc-uat-dialogflow-c5fb",
+			"dlgflowEnv": "keralty-uat",
+			"dlgflowSymptomAgentID": "b5d48413-8a80-40b5-83a2-889634d329bb"
+		}
+	},
+	"AVAILITY_URL": "availity/coverageMock",
+	"PUBLISHABLEKEY_PAYMENT": "pk_test_51MVuxAHDmAZ9NdOJpJFnFaZcovm99e8s67IDfyeSTzKlsuX7UD1IauYnpukHGf2ySF6tZby2oeR0KJhHMfMvSABF00S2cjKKzj"
+}

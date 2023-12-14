@@ -1,0 +1,17 @@
+
+options:
+  substitution_option: ALLOW_LOOSE
+
+steps:
+
+# This step runs sonar.
+- name: 'sonarsource/sonar-scanner-cli'
+  args:
+    - '-Dsonar.host.url=${_SONAR_HOST}'
+    - '-Dsonar.login=${_SONAR_LOGIN}'
+    - '-Dsonar.projectKey=${REPO_NAME}'
+    - '-Dsonar.branch.name=${BRANCH_NAME}' 
+    - '-Dsonar.sources=android/app/src/main/java'
+    - '-Dsonar.java.binaries=.'
+    
+    

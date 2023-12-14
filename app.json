@@ -1,0 +1,53 @@
+{
+	"expo": {
+		"name": "mySanitas",
+		"slug": "mySanitas",
+		"version": "2.1.2",
+		"orientation": "portrait",
+		"icon": "./assets/images/Mysanitas_Icon.png",
+		"scheme": "mysanitas",
+		"userInterfaceStyle": "automatic",
+		"splash": {
+			"image": "./assets/images/splashScreen.png",
+			"resizeMode": "contain",
+			"backgroundColor": "#0a3f6c"
+		},
+		"androidStatusBar": {
+			"backgroundColor": "#0069A7",
+			"translucent": false
+		},
+		"updates": {
+			"fallbackToCacheTimeout": 0
+		},
+		"assetBundlePatterns": ["**/*"],
+		"ios": {
+			"icon": "./assets/images/logo/LogoSanitas.png",
+			"supportsTablet": true,
+			"usesIcloudStorage": true,
+			"splash": {
+				"image": "./assets/images/ios/splash/Default@2x~universal~anyany.png",
+				"resizeMode": "cover",
+				"backgroundColor": "#0a3f6c"
+			},
+			"bundleIdentifier": "com.keralty.mysanitas",
+			"googleServicesFile": "./GoogleService-Info.plist"
+		},
+		"android": {
+			"icon": "./assets/images/logo/LogoSanitas.png",
+			"googleServicesFile": "./google-services.json",
+			"splash": {
+				"ldpi": "./assets/images/android/splash/splash-port-ldpi.png",
+				"mdpi": "./assets/images/android/splash/splash-port-mdpi.png",
+				"hdpi": "./assets/images/android/splash/splash-port-hdpi.png",
+				"xhdpi": "./assets/images/android/splash/splash-port-xhdpi.png",
+				"xxhdpi": "./assets/images/android/splash/splash-port-xxhdpi.png",
+				"xxxhdpi": "./assets/images/android/splash/splash-port-xxxhdpi.png",
+				"resizeMode": "cover"
+			},
+			"package": "com.keralty.mysanitas"
+		},
+		"web": {
+			"favicon": "./assets/images/favicon.png"
+		}
+	}
+}

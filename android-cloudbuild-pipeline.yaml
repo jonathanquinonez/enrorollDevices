@@ -1,0 +1,122 @@
+# Copyright 2018 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0 
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# [START cloudbuild]
+steps:
+  - name: gcr.io/cloud-builders/git
+    args: ['fetch', '--unshallow']
+    
+  - name: gcr.io/cloud-builders/npm
+    args: ['run', 'ar-login']
+    
+  - name: us-east1-docker.pkg.dev/usa-kdc-devops-c034/kdc-android-image/android:$_ANDROID_VERSION
+    args:
+      - add 
+      - '@quillbot/keralty-kdc-usa-front-library-sensely@2.0.1'
+      - add 
+      - '@quillbot/keralty-kdc-usa-front-library-vim@2.0.1'
+      - add
+      - '@babel/plugin-transform-react-jsx'
+      - install      
+    id: Install Dependencies
+    entrypoint: yarn
+  - name: us-east1-docker.pkg.dev/usa-kdc-devops-c034/kdc-android-image/android:$_ANDROID_VERSION
+    args:
+      - '-c'
+      - |
+        cat /proc/sys/fs/file-max
+        APP_ENVO=$_ENV
+        set | grep APP_ENVO
+        node --version
+        export APP_ENVO
+        printenv APP_ENVO
+        yarn install --frozen-lockfile --network-timeout 100000
+        echo fs.inotify.max_user_watches=524288 | tee -a /etc/sysctl.conf
+        sysctl -p
+        echo 'fin de comando'
+        pwd
+        #ls -lah
+        #Add version in android/app/build.gradle file
+        echo "${SHORT_SHA} - Add version '${TAG_NAME}' in android/app/build.gradle file"
+        cat ./android/app/build.gradle | sed -E 's/ versionCode [0-9]+/ versionCode '$(git rev-list ${SHORT_SHA} --first-parent --count)'/g' > ./android/app/build.gradle
+        cat ./android/app/build.gradle | sed -E 's/ versionName "([0-9]+\.*)+"/ versionName "'$(echo ${TAG_NAME} | sed 's/'${_ENV}'-v//')'"/g' > ./android/app/build.gradle
+        #Add version in package.json
+        echo "${SHORT_SHA} - Add version '${TAG_NAME}' in package.json file"
+        cat package.json | jq '.version = "'$(echo ${TAG_NAME} | sed 's/'${_ENV}'-v//')'"' | tee package.json
+        #Build apk
+        ls -lah './android/gradle/wrapper'
+        cd android
+        #chmod -R 777 './gradle/'
+        chmod +x gradlew
+        ENVFILE=.env.${_ENV} ./gradlew app:assembleRelease --stacktrace 
+        #Distribute apk to firebase
+        mv app/build/outputs/apk/release/app-release.apk "react-native-${TAG_NAME}-${SHORT_SHA}.apk"
+        firebase appdistribution:distribute "react-native-${TAG_NAME}-${SHORT_SHA}.apk" --app $_FIRESTORE_APP_ID --release-notes "[${_ENV}] - ${SHORT_SHA} - react-native apk distribution" --groups "${_FIRESTORE_GROUP}"
+    id: Build APK
+    entrypoint: /bin/bash
+    secretEnv: ['REACT_APP_DLGFLOW_EN_PASS', 'REACT_APP_DLGFLOW_ES_PASS', 'REACT_APP_DLGFLOW_EN_USER', 'REACT_APP_DLGFLOW_ES_USER', 'REACT_APP_DLGFLOW_ENV', 'REACT_APP_DLGFLOW_PROJECT', 'REACT_APP_DLGFLOW_SYMPTOM_AGENTID', 'REACT_APP_INTERCOM_APP_ID', 'REACT_APP_PUBLIC_API_TOKEN', 'REACT_APP_RECAPTCHA', 'REACT_APP_SYMPTOM_CHECKER_EN_PASS', 'REACT_APP_SYMPTOM_CHECKER_EN_PROC_ID', 'REACT_APP_SYMPTOM_CHECKER_EN_USER', 'REACT_APP_SYMPTOM_CHECKER_ES_PASS', 'REACT_APP_SYMPTOM_CHECKER_ES_PROC_ID', 'REACT_APP_SYMPTOM_CHECKER_ES_USER', 'REACT_APP_TELADOC_URL', 'REACT_APP_VIRTUAL_ASSISTANCE_EN_PROC_ID', 'REACT_APP_VIRTUAL_ASSISTANCE_ES_PROC_ID', 'REACT_APP_VIM_API_KEY', 'REACT_APP_VIM_ENV', 'REACT_APP_GTM']
+timeout: 1800s
+artifacts:
+  objects:
+    location: 'gs://$_ARTIFACT_BUCKET_NAME/platforms/android/$_ENV'
+    paths: ['android/react-native-${TAG_NAME}-${SHORT_SHA}.apk']
+options:
+  substitutionOption: ALLOW_LOOSE
+  machineType: 'N1_HIGHCPU_8'
+availableSecrets:
+  secretManager:
+  - versionName: projects/$_SECRET_PROJECT_ID/secrets/KDC_FRONT_DLGFLOW_EN_PASS/versions/latest
+    env: 'REACT_APP_DLGFLOW_EN_PASS'
+  - versionName: projects/$_SECRET_PROJECT_ID/secrets/KDC_FRONT_DLGFLOW_EN_USER/versions/latest
+    env: 'REACT_APP_DLGFLOW_EN_USER'
+  - versionName: projects/$_SECRET_PROJECT_ID/secrets/KDC_FRONT_DLGFLOW_ES_PASS/versions/latest
+    env: 'REACT_APP_DLGFLOW_ES_PASS'
+  - versionName: projects/$_SECRET_PROJECT_ID/secrets/KDC_FRONT_DLGFLOW_ES_USER/versions/latest
+    env: 'REACT_APP_DLGFLOW_ES_USER'
+  - versionName: projects/$_SECRET_PROJECT_ID/secrets/KDC_FRONT_DLGFLOW_ENV/versions/latest
+    env: 'REACT_APP_DLGFLOW_ENV'
+  - versionName: projects/$_SECRET_PROJECT_ID/secrets/KDC_FRONT_DLGFLOW_PROJECT/versions/latest
+    env: 'REACT_APP_DLGFLOW_PROJECT'
+  - versionName: projects/$_SECRET_PROJECT_ID/secrets/KDC_FRONT_DLGFLOW_SYMPTOM_AGENTID/versions/latest
+    env: 'REACT_APP_DLGFLOW_SYMPTOM_AGENTID'
+  - versionName: projects/$_SECRET_PROJECT_ID/secrets/KDC_FRONT_INTERCOM_APP_ID/versions/latest
+    env: 'REACT_APP_INTERCOM_APP_ID'
+  - versionName: projects/$_SECRET_PROJECT_ID/secrets/KDC_FRONT_PUBLIC_API_TOKEN/versions/latest
+    env: 'REACT_APP_PUBLIC_API_TOKEN'
+  - versionName: projects/$_SECRET_PROJECT_ID/secrets/KDC_FRONT_RECAPTCHA/versions/latest
+    env: 'REACT_APP_RECAPTCHA'
+  - versionName: projects/$_SECRET_PROJECT_ID/secrets/KDC_FRONT_SC_EN_PASS/versions/latest
+    env: 'REACT_APP_SYMPTOM_CHECKER_EN_PASS'
+  - versionName: projects/$_SECRET_PROJECT_ID/secrets/KDC_FRONT_SC_EN_PROC_ID/versions/latest
+    env: 'REACT_APP_SYMPTOM_CHECKER_EN_PROC_ID'
+  - versionName: projects/$_SECRET_PROJECT_ID/secrets/KDC_FRONT_SC_EN_USER/versions/latest
+    env: 'REACT_APP_SYMPTOM_CHECKER_EN_USER'
+  - versionName: projects/$_SECRET_PROJECT_ID/secrets/KDC_FRONT_SC_ES_PASS/versions/latest
+    env: 'REACT_APP_SYMPTOM_CHECKER_ES_PASS'
+  - versionName: projects/$_SECRET_PROJECT_ID/secrets/KDC_FRONT_SC_ES_PROC_ID/versions/latest
+    env: 'REACT_APP_SYMPTOM_CHECKER_ES_PROC_ID'
+  - versionName: projects/$_SECRET_PROJECT_ID/secrets/KDC_FRONT_SC_ES_USER/versions/latest
+    env: 'REACT_APP_SYMPTOM_CHECKER_ES_USER'
+  - versionName: projects/$_SECRET_PROJECT_ID/secrets/KDC_FRONT_TELADOC_URL/versions/latest
+    env: 'REACT_APP_TELADOC_URL'
+  - versionName: projects/$_SECRET_PROJECT_ID/secrets/KDC_FRONT_VA_EN_PROC_ID/versions/latest
+    env: 'REACT_APP_VIRTUAL_ASSISTANCE_EN_PROC_ID'
+  - versionName: projects/$_SECRET_PROJECT_ID/secrets/KDC_FRONT_VA_ES_PROC_ID/versions/latest
+    env: 'REACT_APP_VIRTUAL_ASSISTANCE_ES_PROC_ID'
+  - versionName: projects/$_SECRET_PROJECT_ID/secrets/KDC_FRONT_VIM_API_KEY/versions/latest
+    env: 'REACT_APP_VIM_API_KEY'
+  - versionName: projects/$_SECRET_PROJECT_ID/secrets/KDC_FRONT_VIM_ENV/versions/latest
+    env: 'REACT_APP_VIM_ENV'
+  - versionName: projects/$_SECRET_PROJECT_ID/secrets/KDC_FRONT_GTM/versions/latest
+    env: 'REACT_APP_GTM'

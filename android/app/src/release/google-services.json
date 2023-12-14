@@ -1,0 +1,39 @@
+{
+	"project_info": {
+		"project_number": "512464799261",
+		"project_id": "usa-kdc-firebase-analytics",
+		"storage_bucket": "usa-kdc-firebase-analytics.appspot.com"
+	},
+	"client": [
+		{
+			"client_info": {
+				"mobilesdk_app_id": "1:512464799261:android:6194089b1bd0f8206ba8f4",
+				"android_client_info": {
+					"package_name": "com.keralty.mysanitas"
+				}
+			},
+			"oauth_client": [
+				{
+					"client_id": "512464799261-0vnd33s7mljl8sb969d0ds7p4i098aup.apps.googleusercontent.com",
+					"client_type": 3
+				}
+			],
+			"api_key": [
+				{
+					"current_key": "AIzaSyB7t8mez1NgpmiIhHDggo0hmzWDX5dQRf4"
+				}
+			],
+			"services": {
+				"appinvite_service": {
+					"other_platform_oauth_client": [
+						{
+							"client_id": "512464799261-0vnd33s7mljl8sb969d0ds7p4i098aup.apps.googleusercontent.com",
+							"client_type": 3
+						}
+					]
+				}
+			}
+		}
+	],
+	"configuration_version": "1"
+}

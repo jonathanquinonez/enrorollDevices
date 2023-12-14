@@ -1,0 +1,5 @@
+gcloud artifacts print-settings npm \
+    --project=usa-kdc-devops-c034 \
+    --repository=kdc-npm-libraries \
+    --location=us-east1 \
+    --scope=@SCOPE

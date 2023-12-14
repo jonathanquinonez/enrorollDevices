@@ -1,0 +1,60 @@
+export interface VitalSignResult {
+    ppm?:                      number;
+    bmi?:                      number;
+    snr?:                      number;
+    msi?:                      number;
+    systolic?:                 number;
+    diastolic?:                number;
+    age?:                      number;
+    breathing?:                number;
+    healthScore?:              number;
+    waistToHeight?:            number;
+    heartRateVariability?:     number;
+    cardiacWorkload?:          number;
+    absi?:                     number;
+    cvdRisk?:                  number;
+    strokeRisk?:               number;
+    heartAttackRisk?:          number;
+    HypertensionRisk?:         number;
+    HypertriglyceridemiaRisk?: number;
+    HypercholesterolemiaRisk?: number;
+    DiabetesRisk?:             number;
+    irregularHeartBeats?:      number;
+    measurementId?:            string;
+    avgStarRating?:            number;
+    BP_STROKE?:                number;
+    BMI_CALC?:                 number;
+    BP_TAU?:                   number;
+    BP_SYSTOLIC?:              number;
+    MSI?:                      number;
+    HEIGHT?:                   number;
+    WAIST_TO_HEIGHT?:          number;
+    SNR?:                      number;
+    RISKS_SCORE?:              number;
+    VITAL_SCORE?:              number;
+    BP_RPP?:                   number;
+    AGE?:                      number;
+    HRV_SDNN?:                 number;
+    BP_HEART_ATTACK?:          number;
+    WEIGHT?:                   number;
+    PHYSICAL_SCORE?:           number;
+    HR_BPM?:                   number;
+    GENDER?:                   number;
+    BR_BPM?:                   number;
+    WAIST_CIRCUM?:             number;
+    ABSI?:                     number;
+    BP_DIASTOLIC?:             number;
+    BP_CVD?:                   number;
+    IHB_COUNT?:                number;
+    HEALTH_SCORE?:             number;
+    PHYSIO_SCORE?:             number;
+    MENTAL_SCORE?:             number;
+    Notes?:                    Notes;
+    sessionId?:                string;
+    identifier?:               number;
+    SESSION_ID?:               string;
+    MEASUREMENT_ID?:           string;
+}
+
+export interface Notes {
+}

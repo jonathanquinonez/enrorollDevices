@@ -1,0 +1,39 @@
+options:
+  substitution_option: ALLOW_LOOSE
+
+steps:
+  - name: 'gcr.io/cloud-builders/gcloud'
+    id: Change Tag ios
+    entrypoint: /bin/bash
+    args:
+    - -c
+    - |
+      echo Descarga de imagen cloud GCP
+      security unlock-keychain -p $_PASS
+      apt-get update
+      apt-cache search sshpass
+      apt-get install sshpass
+      #ssh-keygen -b 2048 -t rsa -f /tmp/sshkey -q -N ""
+      echo 'Envio de llaves'
+      sshpass -p "$_PASS" scp -o stricthostkeychecking=no -r ".ssh/mac-ssh.pub" develop@74.91.11.86:/Users/develop/pipeline/.ssh
+      sshpass -p "$_PASS" scp -o stricthostkeychecking=no -r ".ssh/authorized_keys" develop@74.91.11.86:/Users/develop/pipeline/.ssh
+      echo Estado de conexion es $? , si es igual a cero conexion ssh exitoso..!! 
+      echo 'fin envio de llaves'
+      chmod 600 ./.ssh/mac-ssh
+      chmod 755 ./.ssh
+      eval `ssh-agent -s`
+      ssh-add ./.ssh/mac-ssh
+      re="^([^-v]+)-v(.*)$"
+      [[ "${TAG_NAME}" =~ $re ]] && var1="${BASH_REMATCH[1]}" && var2="${BASH_REMATCH[2]}"
+      echo $var1
+      echo $var2
+      ssh -tt develop@74.91.11.86 'bash --login -s' < .ssh/script_tag.sh ${_OLD_TAG} $var2
+    timeout: 60s
+    
+
+              
+
+
+
+
+    

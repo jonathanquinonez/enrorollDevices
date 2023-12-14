@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "744616617388",
+    "project_id": "testing-keralty-ga4",
+    "storage_bucket": "testing-keralty-ga4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:744616617388:android:1e50263d5fc9408537c609",
+        "android_client_info": {
+          "package_name": "com.keralty.mysanitas"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "744616617388-fm0gr9r468khm1i2tlchg5q6rkif7sut.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA2LndWrPDXJe-XTJqeOXWDPg8pGbjGgM4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "744616617388-fm0gr9r468khm1i2tlchg5q6rkif7sut.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

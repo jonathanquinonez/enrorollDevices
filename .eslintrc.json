@@ -1,0 +1,117 @@
+{
+	"env": {
+		"es2021": true,
+		"node": true
+	},
+	"extends": [
+		"plugin:react/recommended",
+		"airbnb",
+		"plugin:jest/style",
+		"plugin:@typescript-eslint/recommended"
+	],
+	"parser": "@typescript-eslint/parser",
+	"parserOptions": {
+		"ecmaFeatures": {
+			"jsx": true
+		},
+		"ecmaVersion": "latest",
+		"sourceType": "module"
+	},
+	"plugins": ["react", "@typescript-eslint", "jest"],
+	"rules": {
+		"no-tabs": "off",
+		"spaced-comment": "off",
+		"no-param-reassign": "off",
+		"no-extra-semi": "off",
+		"no-plusplus": "off",
+		"comma-dangle": "off",
+		"guard-for-in": "off",
+		"no-restricted-syntax": "off",
+		"import/no-unresolved": [
+			2,
+			{
+				"caseSensitive": false
+			}
+		],
+		"import/extensions": [
+			"error",
+			"ignorePackages",
+			{
+				"js": "never",
+				"jsx": "never",
+				"ts": "never",
+				"tsx": "never"
+			}
+		],
+		"import/order": "off",
+		"react/function-component-definition": [
+			2,
+			{
+				"namedComponents": "arrow-function"
+			}
+		],
+		"react/jsx-filename-extension": [
+			1,
+			{
+				"extensions": [".ts", ".tsx"]
+			}
+		],
+		"import/no-extraneous-dependencies": [
+			"off",
+			{
+				"devDependencies": ["**/*.test.ts", "**/*.spec.tsx"]
+			}
+		],
+		"react/no-unstable-nested-components": [
+			"off",
+			{
+				"allowAsProps": true
+			}
+		],
+		"react/no-array-index-key": "off",
+		"no-use-before-define": "off",
+		"no-empty-pattern": "off",
+		"implicit-arrow-linebreak": "off",
+		"import/prefer-default-export": "off",
+		"react/react-in-jsx-scope": "off",
+		"class-methods-use-this": "off",
+		"object-curly-newline": "off",
+		"operator-linebreak": "off",
+		"@typescript-eslint/no-var-requires": "off",
+		"function-paren-newline": "off",
+		"indent": "off",
+		"no-shadow": "off",
+		"react/jsx-indent-props": "off",
+		"@typescript-eslint/no-shadow": ["error"],
+		"react/jsx-curly-newline": "off",
+		"no-unused-vars": "off",
+		"@typescript-eslint/no-unused-vars": ["error"],
+		"react/jsx-indent": "off",
+		"react/jsx-wrap-multilines": [
+			"error",
+			{
+				"declaration": "parens"
+			}
+		],
+		"linebreak-style": "off"
+	},
+	"settings": {
+		"import/parsers": {
+			"@typescript-eslint/parser": [".ts", ".tsx"]
+		},
+		"import/resolver": {
+			"typescript": {
+				"alwaysTryTypes": true,
+				"project": "tsconfig.json"
+			}
+		}
+	},
+	"overrides": [
+		{
+			"files": ["**/*.test.ts", "**/*.test.tsx"],
+			"env": {
+				"jest": true
+			}
+		}
+	]
+}

@@ -1,0 +1,19 @@
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    "noImplicitAny": true,
+    "baseUrl": "./",
+    "paths": {
+      "assets/*": ["./assets/*"],
+      "adapter/*": ["./src/adapter/*"],
+      "domain/*": ["./src/domain/*"],
+      "infrastructure/*": ["./src/infrastructure/*"],
+      "config/*": ["./src/config/*"],
+      "hooks/*": ["./src/hooks/*"],
+      "i18n/*": ["./src/i18n/*"],
+      "icons/*": ["./assets/icons/*", "./assets/icons/ReferralsIcon*", "./assets/icons/PersonalInfoIcons*", "./assets/icons/NotificationsIcons*"],
+      "ui-core/*": ["./src/ui-core/*"]
+    }
+  }
+}

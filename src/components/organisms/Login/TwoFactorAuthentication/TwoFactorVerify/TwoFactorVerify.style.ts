@@ -1,0 +1,81 @@
+import { KeraltyColors } from 'config/theme';
+import { Dimensions, StyleSheet } from 'react-native';
+
+const styles = (colors: KeraltyColors) =>
+  StyleSheet.create({
+    container: {
+      width: Dimensions.get('window').width,
+      alignItems: 'center',
+      justifyContent: 'center',
+      height: Dimensions.get('window').height * 0.5
+    },
+    radioGroup: {
+      paddingTop: 32,
+      paddingHorizontal: 10,
+    },
+    textOption2: {
+      fontFamily: 'proxima-regular',
+      fontSize: 14,
+      lineHeight: 17,
+      paddingHorizontal: 25,
+      textAlign: 'center',
+      color: '#5B5C5B',
+      marginTop: 20
+    },
+    textOption: {
+      fontFamily: 'proxima-bold',
+      fontSize: 18,
+      lineHeight: 21,
+      textAlign: 'center',
+      marginBottom: 30,
+      color: colors.BLUE288,
+      marginTop: 40
+    },
+    text: {
+      fontFamily: 'proxima-regular',
+      fontSize: 14,
+      color: colors.GRAYDC1
+    },
+    containerModal: {
+      width: '100%',
+      justifyContent: 'center',
+      alignItems: 'center'
+    },
+    textBlue: {
+      marginTop: 24,
+      marginBottom: 32,
+      textAlign: 'center',
+      fontFamily: 'proxima-regular',
+      fontSize: 18,
+      lineHeight: 24,
+      color: '#055293',
+    },
+    textGreen: {
+      textAlign: 'center',
+      marginBottom: 24,
+      fontFamily: 'proxima-regular',
+      fontSize: 18,
+      lineHeight: 24,
+      color: '#3CA70D',
+    },
+    buttonClose: {
+      color: '#3CA70D',
+      fontFamily: 'proxima-bold',
+      fontSize: 16
+    },
+    title: { textAlign: 'center', fontSize: 30 },
+    codeFiledRoot: { marginTop: 40 },
+    cell: {
+      width: 40,
+      height: 40,
+      justifyContent: 'center',
+      backgroundColor: '#C4C4C4',
+      borderRadius: 10,
+      margin: 5,
+    },
+    focusCell: {
+      backgroundColor: '#b1b1b1',
+    },
+  });
+
+export default styles;

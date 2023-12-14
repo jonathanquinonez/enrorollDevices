@@ -1,0 +1,17 @@
+export interface EmergencyContanctInfo {
+	address1: string,
+	address2: string,
+	cellPhone: string,
+	city: string,
+	controlNo: number,
+	firstName: string,
+	guarantorFirstName: string,
+	guarantorLastName: string,
+	lastName: string,
+	patientId: number,
+	relation: string,
+	state: string,
+	userId: number,
+	workPhone: string,
+	zipCode: number,
+};
