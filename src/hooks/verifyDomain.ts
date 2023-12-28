@@ -2,8 +2,7 @@ import axios from 'axios';
 import appconfig from 'config/index';
 
 export default function verifyDomain() {
-	const requestVerifyDomain = async ( domain: string ) => {
-	
+	const requestVerifyDomain = async (domain: string) => {
 		return axios({
 			method: 'get',
 			url: `${appconfig.API_URL}/core/general/verifyDomain/${domain}`,

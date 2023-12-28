@@ -59,12 +59,28 @@ const Consents = (props: Props) => {
 	const { authUid } = useAppSelector(userSelectors.selectUser);
 	const navigation: any = useNavigation();
 
+	const {
+		control,
+		handleSubmit,
+		setValue,
+		getValues,
+		setError,
+		watch,
+		formState: { errors },
+	} = useForm<ConsentsList>({
+		resolver: yupResolver(ConsentsYup),
+		mode: 'onSubmit',
+	});
+
 	const getItemInfo = async () => {
 		let values: any;
 		values = await AsyncStorage.getItem('loadUserInfoByCode');
 		let valuesParse = JSON.parse(values);
 		setTempValues(valuesParse);
 		setValue('date', new Date());
+
+		const name = `${ valuesParse?.patientInformation?.firstName ?? valuesParse?.firstName } ${valuesParse?.patientInformation?.lastName ?? valuesParse?.lastName}`;
+		setValue('firm', name);
 	};
 	const dispatch = useAppDispatch();
 
@@ -72,17 +88,7 @@ const Consents = (props: Props) => {
 		getItemInfo();
 	}, [handlerNext]);
 
-	const {
-		control,
-		handleSubmit,
-		setValue,
-		getValues,
-		setError,
-		formState: { errors },
-	} = useForm<ConsentsList>({
-		resolver: yupResolver(ConsentsYup),
-		mode: 'onSubmit',
-	});
+
 	const { setAlertErrorMessage } = useErrorAlert();
 
 	const onValidSubmitFinalSave = useCallback(async () => {
@@ -103,6 +109,7 @@ const Consents = (props: Props) => {
 				let messagePush = getValues('messagePush');
 				const isEnglish = lng != 'es';
 				let isNewVersion = editAccountdata?.isNewVersion;
+				let consentHippa = Boolean(getValues('consentHippa'));
 				dispatch(
 					userActions.setLocation(
 						tempValues?.patientInformation
@@ -122,6 +129,9 @@ const Consents = (props: Props) => {
 						secondData,
 						tempValues,
 						isEnglish,
+						editAccountdata,
+						consentHippa,
+						signature: getValues('firm')
 					}).unwrap();
 					navigation.navigate('Home');
 				} else {
@@ -135,6 +145,9 @@ const Consents = (props: Props) => {
 						secondData,
 						tempValues,
 						isEnglish,
+						editAccountdata,
+						consentHippa,
+						signature: getValues('firm')
 					}).unwrap();
 				}
 			} else {
@@ -153,7 +166,6 @@ const Consents = (props: Props) => {
 				});
 			}
 		} catch (error) {
-			console.log(error);
 			if (error == 80) {
 				setModal({
 					render: () => (
@@ -178,7 +190,7 @@ const Consents = (props: Props) => {
 				t(`errors.code${error == '100' || error == '80' ? '101' : error}`),
 			);
 		}
-	}, [finalSave, tempValues, firstData, secondData]);
+	}, [finalSave, tempValues, firstData, secondData, editAccountdata]);
 
 	const resetLogin = () => {
 		reset({ index: 0, routes: [{ name: 'Login' }] });
@@ -389,8 +401,27 @@ const Consents = (props: Props) => {
 					/>
 				</View>
 
-				<Text style={styles.text} maxFontSizeMultiplier={1.3}>
-					{t('consents.ifYou')}
+				
+				<Text style={[styles.item]} maxFontSizeMultiplier={1.3}>
+					{t('consents.consentComunication1')}
+					<Text style={styles.itemBold} maxFontSizeMultiplier={1.3}>
+						{t('consents.consentComunicationBol1')}
+						<Text style={styles.item} maxFontSizeMultiplier={1.3}>
+							{t('consents.consentComunication2')}
+							<Text style={styles.itemBold} maxFontSizeMultiplier={1.3}>
+								{t('consents.consentComunicationBol2')}
+								<Text style={styles.item} maxFontSizeMultiplier={1.3}>
+									{t('consents.consentComunication3')}
+									<Text style={styles.itemBold} maxFontSizeMultiplier={1.3}>
+										{t('consents.consentComunicationBol3')}
+										<Text style={styles.item} maxFontSizeMultiplier={1.3}>
+											{t('consents.consentComunication4')}
+										</Text>
+									</Text>
+								</Text>
+							</Text>
+						</Text>
+					</Text>
 				</Text>
 
 				<View
@@ -573,7 +604,7 @@ const Consents = (props: Props) => {
 				<View style={styles.customRowCheck}>
 					<CheckboxController
 						/* accesibilityHint='Consents patient check'
-            accesibilityLabel='Consents patient check' */
+			accesibilityLabel='Consents patient check' */
 						accessibilityRole="checkbox"
 						name="accepted1"
 						control={control}
@@ -594,7 +625,7 @@ const Consents = (props: Props) => {
 				<View style={styles.customRowCheck}>
 					<CheckboxController
 						/* accesibilityHint='Consents Acknow check'
-            accesibilityLabel='Consents Acknow check' */
+			accesibilityLabel='Consents Acknow check' */
 						accessibilityRole="checkbox"
 						name="accepted2"
 						control={control}
@@ -615,7 +646,7 @@ const Consents = (props: Props) => {
 				<View style={styles.customRowCheck}>
 					<CheckboxController
 						/* accesibilityHint='Consents finanlcial check'
-            accesibilityLabel='Consents financial check' */
+			accesibilityLabel='Consents financial check' */
 						accessibilityRole="checkbox"
 						name="accepted3"
 						control={control}
@@ -636,7 +667,7 @@ const Consents = (props: Props) => {
 				<View style={styles.customRowCheck}>
 					<CheckboxController
 						/* accesibilityHint='Consents finanlcial check'
-            accesibilityLabel='Consents financial check' */
+			accesibilityLabel='Consents financial check' */
 						accessibilityRole="checkbox"
 						name="accepted4"
 						control={control}
@@ -657,7 +688,7 @@ const Consents = (props: Props) => {
 				<View style={styles.customRowCheck}>
 					<CheckboxController
 						/* accesibilityHint='Consents finanlcial check'
-            accesibilityLabel='Consents financial check' */
+			accesibilityLabel='Consents financial check' */
 						accessibilityRole="checkbox"
 						name="accepted5"
 						control={control}
@@ -678,7 +709,7 @@ const Consents = (props: Props) => {
 				<View style={styles.customRowCheck}>
 					<CheckboxController
 						/* accesibilityHint='Consents finanlcial check'
-            accesibilityLabel='Consents financial check' */
+			accesibilityLabel='Consents financial check' */
 						accessibilityRole="checkbox"
 						name="accepted6"
 						control={control}
@@ -699,7 +730,7 @@ const Consents = (props: Props) => {
 				<View style={styles.customRowCheck}>
 					<CheckboxController
 						/* accesibilityHint='Consents finanlcial check'
-            accesibilityLabel='Consents financial check' */
+			accesibilityLabel='Consents financial check' */
 						accessibilityRole="checkbox"
 						name="accepted7"
 						control={control}
@@ -707,7 +738,7 @@ const Consents = (props: Props) => {
 						value={isAccepted7}
 						onPress={() => setIsAccepted7(!isAccepted7)}
 						error={errors.accepted7}
-						// children={}
+					// children={}
 					/>
 					<View style={{ flex: 1 }}>
 						<Text style={styles.textCheckbox} maxFontSizeMultiplier={1.3}>
@@ -718,7 +749,7 @@ const Consents = (props: Props) => {
 				<View style={styles.customRowCheck}>
 					<CheckboxController
 						/* accesibilityHint='Consents finanlcial check'
-            accesibilityLabel='Consents financial check' */
+			accesibilityLabel='Consents financial check' */
 						accessibilityRole="checkbox"
 						name="accepted8"
 						control={control}
@@ -739,7 +770,7 @@ const Consents = (props: Props) => {
 				<View style={styles.customRowCheck}>
 					<CheckboxController
 						/* accesibilityHint='Consents finanlcial check'
-            accesibilityLabel='Consents financial check' */
+			accesibilityLabel='Consents financial check' */
 						accessibilityRole="checkbox"
 						name="accepted9"
 						control={control}
@@ -775,16 +806,27 @@ const Consents = (props: Props) => {
 							</Text>
 						</View>
 
-						<View style={styles.customRowCheck}>
+						<RadioGroup
+							style={{
+								marginBottom: 0, flexDirection: 'row', width: '100%',
+								flexWrap: 'wrap', alignItems: 'flex-start'
+							}}
+							onChange={(v) => {
+								setValue('consentHippa', v == 1 ? true : false);
+								setError('consentHippa', {});
+							}}
+						>
+
 							<RadioButton
 								accessibilityRole="radio"
 								value={1}
 								style={{
 									paddingRight: 10,
+
 								}}
-								textStyle={styles.item}
+
 							/>
-							<View style={{ flex: 1, marginLeft: 4 }}>
+							<View style={{ width: '90%', marginLeft: 4, paddingBottom: 15 }}>
 								<Text style={[styles.item]} maxFontSizeMultiplier={1.3}>
 									{t('consents.yes') + ','}
 									<Text style={styles.itemBold} maxFontSizeMultiplier={1.3}>
@@ -795,28 +837,45 @@ const Consents = (props: Props) => {
 									</Text>
 								</Text>
 							</View>
-						</View>
-						<View style={styles.customRowCheck}>
+
+
 							<RadioButton
 								accessibilityRole="radio"
-								value={1}
+								value={2}
 								style={{
 									paddingRight: 10,
+
+
 								}}
-								textStyle={styles.item}
+
 							/>
-							<View style={{ flex: 1, marginLeft: 4 }}>
+							<View style={{ width: '90%', marginLeft: 4, paddingBottom: 15 }}>
 								<Text style={[styles.item]} maxFontSizeMultiplier={1.3}>
 									{t('consents.no') + ','}
 									<Text style={styles.itemBold} maxFontSizeMultiplier={1.3}>
 										{t('consents.iDoNotGiveMyConsent')}
 										<Text style={styles.item} maxFontSizeMultiplier={1.3}>
-											{t('consents.myConsentTextend')}
+											{t('consents.notMyConsentTextend')}
 										</Text>
 									</Text>
 								</Text>
 							</View>
-						</View>
+
+						</RadioGroup>
+						{errors.consentHippa?.message && (
+							<View style={{ marginBottom: 10, width: '100%', alignSelf: 'center' }}>
+								<Text
+									style={{
+										color: colors.DANGER,
+										fontFamily: 'proxima-regular',
+										fontSize: 12,
+									}}
+									maxFontSizeMultiplier={1.3}
+								>
+									{t(`errors.required`)}
+								</Text>
+							</View>
+						)}
 					</>
 				) : (
 					<>
@@ -853,15 +912,16 @@ const Consents = (props: Props) => {
 					<Input
 						inputStyle={styles.firm}
 						label={t('consents.type')}
-						placeholder={'*'}
+						placeholder={t('consents.placeholderSign')}
 						setDisabled={false}
 						labelStyle={styles.label}
-						value={`${
-							tempValues?.patientInformation?.firstName ?? tempValues?.firstName
-						} ${tempValues?.patientInformation?.lastName ?? tempValues?.lastName}`}
+						value={watch('firm')}
 						control={control}
 						error={errors.firm}
 						name="firm"
+						onChange={(e) => {
+							setValue('firm', e.nativeEvent.text);
+						}}
 					/>
 				) : (
 					<></>

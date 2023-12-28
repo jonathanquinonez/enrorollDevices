@@ -8,7 +8,6 @@ export const FormSchema = Yup.object({
     function (value) {
       const { from } = this.parent;
       if (from && value) {
-        console.log('----value > from---',value, from)
         return value >= from;
       }
       return true;

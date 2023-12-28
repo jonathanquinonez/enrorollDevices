@@ -32,9 +32,6 @@ export const ReferralsDetails = () => {
 	const [getReferral_pdf] = EcwService.useGetReferral_pdfMutation();
 
 	const { dataInfoReferralsDetails }: any = useAppSelector(userSelectors.selectIsLoggedIn);
-	useEffect(()=>{
-		console.log('---->',dataInfoReferralsDetails)
-	},[dataInfoReferralsDetails])
 
 	const downloadPdf = useCallback(
 		async (referralId: number, patientId: number) => {
@@ -61,11 +58,9 @@ export const ReferralsDetails = () => {
 				FileViewer.open(fileUri, { showOpenWithDialog: true, showAppsSuggestions: true })
 					.then(() => {
 						// success
-						console.log("File is opened")
 					})
 					.catch(error => {
 						// error
-						console.log("Error in file", error)
 					})
 			}
 		);

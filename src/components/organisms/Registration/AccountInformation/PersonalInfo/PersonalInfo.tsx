@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Dimensions, View } from 'react-native';
+import { Dimensions, View, Text } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { MASK } from 'ui-core/utils/mask';
 //Component
 import InputSelect from 'src/components/atoms/InputSelect/InputSelect';
 import { DatePickerController } from 'src/components/atoms/DatePicker/DatePicker';
 import Input from 'src/components/atoms/Input/Input';
+
 // Types, Styles
 import { PersonalInfoProps as Props } from './PersonalInfo.types';
 //Images
@@ -13,6 +14,7 @@ import MobileAlt from 'icons/MobileAlt.svg';
 import EnvelopeIcon from 'icons/EnvelopeIcon.svg';
 import MapMarkerAlt from 'icons/MapMarkerAlt.svg';
 import User from 'icons/User.svg';
+import { useAppSelector, useAppDispatch } from 'adapter/hooks';
 import useConsents from '../../../../../hooks/useConsents';
 import moment from 'moment';
 import IconLanguage from 'icons/PersonalInfoIcons/language.svg';
@@ -23,6 +25,17 @@ import IconJob from 'icons/PersonalInfoIcons/suitcase.svg';
  * @since 1.0.0
  */
 const PersonalInfo: React.FC<Props> = (props) => {
+	const { control, errors, setValue, clearTemp, elegibilityData } = props;
+	const { t } = useTranslation();
+	const tempUserSSO = useAppSelector((state) => state.user.tempUserSSO);
+	const tempEmailSSOEdited = useAppSelector((state) => state.user.tempEmailSSOEdited);
+	const [showGenderIdentityOther, setShowGenderIdentityOther] = useState<boolean>(false);
+	const [showSexualOrientationOther, setShowSexualOrientationOther] = useState<boolean>(false);
+	const [showPreferedLanguageOther, setShowPreferedLanguageOther] = useState<boolean>(false);
+	const [isEmployer, setIsEmployer] = useState<boolean>(false);
+
+	const dispatch = useAppDispatch();
+
 	const {
 		gendersOptions,
 		sexualOrientationOptions,
@@ -31,14 +44,6 @@ const PersonalInfo: React.FC<Props> = (props) => {
 		preferedLanguageOptions,
 		employmentStatusOptions,
 	} = useConsents();
-
-	const [showGenderIdentityOther, setShowGenderIdentityOther] = useState<boolean>(false);
-	const [showSexualOrientationOther, setShowSexualOrientationOther] = useState<boolean>(false);
-	const [showPreferedLanguageOther, setShowPreferedLanguageOther] = useState<boolean>(false);
-	const [isEmployer, setIsEmployer] = useState<boolean>(false);
-
-	const { control, errors, setValue, clearTemp, elegibilityData } = props;
-	const { t } = useTranslation();
 
 	const [showRaceOther, setShowRaceOther] = useState<boolean>(false);
 
@@ -119,7 +124,7 @@ const PersonalInfo: React.FC<Props> = (props) => {
 					/>
 				</>
 			)}
-			{!clearTemp && !elegibilityData ? (
+			{!clearTemp ? (
 				<>
 					<InputSelect
 						icon={<User />}
@@ -241,7 +246,6 @@ const PersonalInfo: React.FC<Props> = (props) => {
 
 							setValue('race', selectedItem.value);
 							setValue('raceLabel', selectedItem.label);
-							console.log('---_>', v);
 							if (v === 'O') {
 								setShowRaceOther(true);
 							} else {
@@ -344,41 +348,43 @@ const PersonalInfo: React.FC<Props> = (props) => {
 						items={employmentStatusOptions}
 						placeholder={t('patientRegistration.placeholders.employmentStatus')}
 						onChange={(v) => {
-							if (v == 1 || v == 2) setIsEmployer(true)
+							if (v == 1 || v == 2) setIsEmployer(true);
 							else {
 								setIsEmployer(false);
-								setValue('employerName', '')
-								setValue('workPhone', '')
+								setValue('employerName', '');
+								setValue('workPhone', '');
 							}
-							setValue('employmentStatus', v)
+							setValue('employmentStatus', v);
 						}}
-						name='employmentStatus'
+						name="employmentStatus"
 						error={errors.employmentStatus}
 					/>
-					{isEmployer && <>
-						<Input
-							icon={<User />}
-							keyboardType="name-phone-pad"
-							inputStyle={{ width: Dimensions.get('window').width * 0.85 }}
-							placeholder={t('patientRegistration.placeholders.employerName')}
-							label={t('createAccount.inputs.employerName')}
-							name={'employerName'}
-							control={control}
-							error={errors.employerName}
-						/>
-						<Input
-							icon={<MobileAlt />}
-							keyboardType="numeric"
-							mask={MASK.phone}
-							inputStyle={{ width: Dimensions.get('window').width * 0.85 }}
-							placeholder={t('patientRegistration.placeholders.workPhone')}
-							label={t('createAccount.inputs.workPhone')}
-							name={'workPhone'}
-							control={control}
-							error={errors.workPhone}
-							autoCorrect={false}
-						/>
-					</>}
+					{isEmployer && (
+						<>
+							<Input
+								icon={<User />}
+								keyboardType="name-phone-pad"
+								inputStyle={{ width: Dimensions.get('window').width * 0.85 }}
+								placeholder={t('patientRegistration.placeholders.employerName')}
+								label={t('createAccount.inputs.employerName')}
+								name={'employerName'}
+								control={control}
+								error={errors.employerName}
+							/>
+							<Input
+								icon={<MobileAlt />}
+								keyboardType="numeric"
+								mask={MASK.phone}
+								inputStyle={{ width: Dimensions.get('window').width * 0.85 }}
+								placeholder={t('patientRegistration.placeholders.workPhone')}
+								label={t('createAccount.inputs.workPhone')}
+								name={'workPhone'}
+								control={control}
+								error={errors.workPhone}
+								autoCorrect={false}
+							/>
+						</>
+					)}
 					<InputSelect
 						icon={<MapMarkerAlt />}
 						control={control}
@@ -408,7 +414,15 @@ const PersonalInfo: React.FC<Props> = (props) => {
 				name={'email'}
 				control={control}
 				error={errors.email}
-				editable={elegibilityData && false}
+				editable={
+					tempUserSSO && tempUserSSO != 'NO_FB' && tempEmailSSOEdited
+						? true
+						: elegibilityData
+						? !elegibilityData.email
+							? true
+							: false
+						: true
+				}
 			/>
 
 			<Input
@@ -422,7 +436,7 @@ const PersonalInfo: React.FC<Props> = (props) => {
 				control={control}
 				error={errors.mobile}
 				autoCorrect={false}
-				editable={elegibilityData && false}
+				editable={elegibilityData && !elegibilityData.cellphone}
 			/>
 
 			<View style={{ marginBottom: 23 }}></View>

@@ -59,6 +59,7 @@ steps:
         cd android
         #chmod -R 777 './gradle/'
         chmod +x gradlew
+        ./gradlew clean
         ENVFILE=.env.${_ENV} ./gradlew app:assembleRelease --stacktrace 
         #Distribute apk to firebase
         mv app/build/outputs/apk/release/app-release.apk "react-native-${TAG_NAME}-${SHORT_SHA}.apk"

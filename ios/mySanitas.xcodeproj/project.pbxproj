@@ -176,7 +176,7 @@
 				LastUpgradeCheck = 1130;
 				TargetAttributes = {
 					13B07F861A680F5B00A75B9A = {
-						DevelopmentTeam = CCU5R5FL3Y;
+						DevelopmentTeam = 229A2DXP3T;
 						LastSwiftMigration = 1250;
 						ProvisioningStyle = Automatic;
 					};
@@ -347,7 +347,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 2.6.0.1_uat;
-				DEVELOPMENT_TEAM = CCU5R5FL3Y;
+				DEVELOPMENT_TEAM = 229A2DXP3T;
 				ENABLE_BITCODE = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
@@ -356,7 +356,7 @@
 				INFOPLIST_FILE = mySanitas/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 2.6.0.1_uat;
+				MARKETING_VERSION = 1_uat;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -383,12 +383,12 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 2.6.0.1_uat;
-				DEVELOPMENT_TEAM = CCU5R5FL3Y;
+				DEVELOPMENT_TEAM = 229A2DXP3T;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = mySanitas/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 2.6.0.1_uat;
+				MARKETING_VERSION = 1_uat;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",

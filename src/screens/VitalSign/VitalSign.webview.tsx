@@ -65,17 +65,14 @@ const VitalSignWebView = (props: any) => {
 	const saveData = async (result: any) => {
 		let getHistory: any = await AsyncStorage.getItem(`${email}mySanitas`);
 		getHistory = JSON.parse(getHistory);
-		console.log('1.....result.....1', getHistory)
 
 		let listHistory: any[] = getHistory?.length ? getHistory : [];
 		listHistory.push(result);
-		console.log('.....result.....', result)
 		await AsyncStorage.setItem(`${email}mySanitas`, JSON.stringify(listHistory));
 	}
 
 	const handlerChangeURL = async (webState: WebViewNavigation) => {
 		const { url } = webState;
-		console.log('URL ======>', url)
 		if (url.indexOf(urlCallbackResults) > -1) {
 			if (url.indexOf('error=') > -1) {
 				setShowWebView(false);
@@ -131,7 +128,7 @@ const VitalSignWebView = (props: any) => {
 				}
 			})
 			.catch((error) => {
-				console.log(error)
+
 			});
 	};
 

@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Alert } from 'react-native';
+import { Dimensions, View } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import useStyles from 'hooks/useStyles';
 import ModalNewVisit from 'src/components/molecules/LoginForm/ModalNewVisit/ModalNewVisit';
@@ -28,9 +28,8 @@ import ModalWarning from 'src/components/molecules/ModalWarning/ModalWarning';
 import { userSelectors } from 'adapter/user/userSelectors';
 import { TIMES_ZONES, getCustomDate } from 'src/utils/devices';
 import IconWarningRed from 'icons/IconWarningRed.svg';
-import jwtDecode, { JwtPayload } from 'jwt-decode';
-import i18n from 'i18n/i18n';
-import { IToken } from './Login.types';
+import { ChatKeralty, Keraltyhandles } from '@quillbot/keralty-chat-mobile';
+import { IconBubbleButton } from 'src/components/organisms/Login/BubbleButton/BubbleButton';
 
 const Login = (props: any) => {
 	const params = props.route.params || {};
@@ -125,10 +124,10 @@ const Login = (props: any) => {
 			}
 
 			const resp: any = await authSSO({
-				ssoToken: token
+				ssoToken: token,
 			}).unwrap();
-			//const desencrypt : IToken = jwtDecode(token)	 
-			if( resp ){
+			//const desencrypt : IToken = jwtDecode(token)
+			if (resp) {
 				//await i18n.changeLanguage(desencrypt?.language);
 				setShow(false);
 				if (resp?.code == 1) {
@@ -141,13 +140,14 @@ const Login = (props: any) => {
 				} else if (resp?.code == 2) {
 					let tempUserSSO = resp?.data?.tempUser;
 					dispatch(userActions.setTempUserSSO(tempUserSSO));
-					navigation.navigate('CreateAccount');
+					navigation.navigate('CreateAccount', { sso: tempUserSSO });
 				} else if (resp?.code == 3) {
 					navigation.navigate('CreateAccount');
 				} else if (resp?.code == 4) {
 					const value = {
 						accountNumber: resp?.data?.accountNumber,
 						dateOfBirth: resp?.data?.dateOfBirth,
+						tempUser: resp?.data?.tempUser,
 						state: 'FL',
 					};
 					navigation.navigate('CreateAccountSSO', { sso: value });
@@ -250,7 +250,8 @@ const Login = (props: any) => {
 			const appVersion = DeviceInfo.getVersion();
 			const resultDiff = isNewerVersion(appVersion.toString(), version.toString());
 			dispatch(loaderActions.setLoading(false));
-			if (resultDiff) {
+
+			if (false) {
 				setModal({
 					render: () => <ModalNewVersion />,
 					height: 400,
@@ -286,9 +287,55 @@ const Login = (props: any) => {
 		}
 	}, [params.tokenFB]);
 
+	const ref = React.useRef<Keraltyhandles>(null);
+	const appImage = require('../../../assets/images/bookAppoim.png');
+
 	return (
 		<SafeScreen>
 			{params && params.tokenFB && show ? <Splash startTime={0} /> : <LoginOrganism />}
+			<>
+				<ChatKeralty
+					ref={ref}
+					baseUrl="https://mychatqa.mysanitas.com"
+					isPublic
+					language={t('general.locale')}
+					//    isActiveBubble
+					styleButtonBurger={{ top: Dimensions.get('screen').height * 0.8 }}
+					queue={'support'}
+					buttons={[
+						{
+							action: () => navigation.navigate('VimView'),
+							icon: (
+								<IconBubbleButton
+									source={appImage}
+									text={t('bobbleMenu.appointments')}
+								/>
+							),
+							title: t('bobbleMenu.appointments'),
+						},
+						/*	{
+							title: t('bobbleMenu.symptoms'),
+							icon: (
+								<IconBubbleButton source={checkImage} text={t('bobbleMenu.symptoms')} />
+							),
+							action: () => navigation.navigate('SymtomsView'),
+						},*/
+					]}
+					user={{
+						isPublic: true,
+						authuid: '',
+						currenttimezone: '',
+						datebirthday: '',
+						state: '',
+						sanitasAccountNumber: '',
+						gender: '',
+						mail: '',
+						token: '',
+						userName: '',
+					}}
+				/>
+			</>
+
 		</SafeScreen>
 	);
 };

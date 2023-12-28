@@ -106,7 +106,6 @@ export const RegistryList: React.FC<IDataRegistry> = (props) => {
 
 	const handlerDownload = async (item: any) => {
 		try {
-			console.log("el item", item)
 			const languageRequest = language.split('-');
 			const data: any = {
 				patientId: item.patientId,
@@ -120,7 +119,6 @@ export const RegistryList: React.FC<IDataRegistry> = (props) => {
 				.unwrap()
 				.then((response) => {
 					if (Platform.OS === 'android') {
-						console.log(item.appointmentProvider.replace(" ", "_"))
 						let date = moment(item.appointmentDate).format('MM-DD-YYYY')
 						savepdfToFilesystem(response, `${t('myHealth.regis2')} ${item.appointmentProvider} ${date}`);
 					} else {
@@ -135,7 +133,6 @@ export const RegistryList: React.FC<IDataRegistry> = (props) => {
 				});
 		} catch (error) {
 			//openModal();
-			console.log('\n error', error);
 		}
 	};
 
@@ -179,11 +176,9 @@ export const RegistryList: React.FC<IDataRegistry> = (props) => {
 			FileViewer.open(fileUri, { showOpenWithDialog: true, showAppsSuggestions: true })
 				.then(() => {
 					// success
-					console.log('File is opened');
 				})
 				.catch((error) => {
 					// error
-					console.log('Error in file', error);
 				});
 		});
 	};

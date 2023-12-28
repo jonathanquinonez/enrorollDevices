@@ -58,7 +58,8 @@ export const ComplementaryPersonalInfoSchema: Yup.SchemaOf<UserComplementaryInfo
 			.matches(REGEX.woSpecialCaracters, 'invalidName'),
 		city: Yup.string()
 			.required('required')
-			.max(255, 'max')
+			.min(2, 'min')
+			.max(50, 'max')
 			.matches(REGEX.lettersNumberSpace, 'invalidName'),
 		zipCode: Yup.string()
 			.required('required')

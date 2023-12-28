@@ -31,7 +31,6 @@ const authMapper = {
 	},
 	// ------------------ Domain Object => Data Transfer Object ------------------ //
 	mapToUpdateUsersPatientInfo: (value: UserInformationEdit) => {
-
 		return {
 			authUid: value?.authUid,
 			sexAssignedAtBirth: value?.sex,
@@ -42,8 +41,8 @@ const authMapper = {
 			zipCode: value.zipCode,
 			city: value.city,
 			state: value.state,
-			employerName: value.employmentStatusLabel,
-			// workPhone: value.,
+			employerName: value.employerName,
+			workPhone: value.workPhone,
 			genderIdentity: {
 				id: value.genderIdentity,
 				value: value.genderIdentityLabel == 'Otro' ? 'Other' : value.genderIdentityLabel,

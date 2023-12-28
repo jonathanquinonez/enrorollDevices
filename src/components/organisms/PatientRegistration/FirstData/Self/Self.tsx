@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { View, Text, Dimensions, Platform } from 'react-native';
+import { View, Text, Dimensions, Platform, StyleSheet } from 'react-native';
 import useStyles from 'hooks/useStyles';
 import { useTranslation } from 'react-i18next';
 //Components
@@ -8,6 +8,7 @@ import Input from 'src/components/atoms/Input/Input';
 import componentStyles from './Self.styles';
 //Images
 import MobileAlt from 'icons/MobileAlt.svg';
+import PhoneHome from 'icons/phoneHome.svg';
 import MapMarkerAlt from 'icons/MapMarkerAlt.svg';
 import IconPharmacy from 'icons/Pharmacy.svg';
 import UserIcon from 'icons/User.svg';
@@ -43,14 +44,15 @@ import IconMarital from 'icons/marital.svg';
 import IconLanguage from 'icons/language.svg';
 import IconEmployer from 'icons/employer.svg';
 import IconTelePhone from 'icons/telephone.svg';
-import {
-	listGender,
-	mapsListGender,
-} from 'src/screens/PersonalInformation/EditAccount/EditAccount.types';
+import RNPickerSelect from 'react-native-picker-select';
+import ArrowDownIcon from 'icons/ArrowDownIcon.svg';
+
 import { patientRelationship } from 'domain/entities/tempFormUser';
+import { windowDimentions } from 'ui-core/utils/globalStyles';
+import i18n from 'i18n/i18n';
 
 const Self: React.FC<SelfProps> = (props) => {
-	const { handlerNext, setFirstData, getListOfPharmacies, listOfPharmacies } = props;
+	const { handlerNext, setFirstData, getListOfPharmacies, listOfPharmacies, selfValue } = props;
 	const { navigate, reset } = useNavigation();
 	const [registerConsentsTime] = RegisterService.useRegisterConsentsTimeMutation();
 	const { setModal, closeModal } = useBottomSheet();
@@ -61,6 +63,7 @@ const Self: React.FC<SelfProps> = (props) => {
 	const [patientInformation, setPatientInformation] = useState<any>();
 	const [saveValue, setSaveValue] = useState<any>();
 	const [pharmacyZipValue, setPharmacyZipValue] = useState('');
+	const [dateOfBirthValue, setdateOfBirth] = useState('');
 	const [updateNamePharmacy, setUpdateNamePharmacy] = useState<boolean>(false);
 	const [authPharmacy, setAuthPharmacy] = useState<boolean | undefined>();
 	const [timeTemps, setTimeTemps] = useState<any | undefined>();
@@ -70,6 +73,7 @@ const Self: React.FC<SelfProps> = (props) => {
 	const [sex, setSex] = useState<string>('M');
 
 	const { editAccountdata } = useAppSelector(userSelectors.selectEditAccountdata);
+
 	const other = 'O';
 	const employmentStatusRestrictions = ['1', '2'];
 
@@ -78,6 +82,80 @@ const Self: React.FC<SelfProps> = (props) => {
 		{ label: t('sex.M'), value: 'M' },
 		{ label: t('sex.D'), value: 'U' },
 	];
+
+	const getGender = (value: string) => {
+		const upperValue = value.toUpperCase();
+		if( upperValue === sexOptions[0].value ) return t('sex.F', { lng: 'en' })
+		if( upperValue === sexOptions[1].value ) return t('sex.M', { lng: 'en' })
+		if( upperValue === sexOptions[2].value ) return t('sex.D', { lng: 'en' })
+
+		return ''
+	}
+
+	const maritalStatusOptions = (lng = i18n.language) => {
+		return [
+			{ 
+				label: t('maritalStatus.single', { lng }), 
+				value: '1' 
+			},
+			{
+				label: t('maritalStatus.married', { lng }),
+				value: '2',
+			},
+			{
+				label: t('maritalStatus.divorced', { lng }),
+				value: '3',
+			},
+			{
+				label: t('maritalStatus.widowed', { lng }),
+				value: '4',
+			},
+			{
+				label: t('maritalStatus.declined', { lng }),
+				value: '5',
+			},
+		]
+	}
+
+	const getMaritalStatusByLanguage = (value: string) => {
+		let id = ''
+		i18n.languages.forEach( lang => {
+			const foundOption = maritalStatusOptions(lang).find( option => option.label.toLowerCase() === value.toLowerCase())
+			if( foundOption ) {
+				id = foundOption.value
+			}
+		})
+
+		return id;
+
+	}
+
+	const {
+		control,
+		handleSubmit,
+		setValue,
+		getValues,
+		watch,
+		setError,
+		clearErrors,
+		formState: { errors, isDirty },
+	} = useForm<SelfList>({
+		resolver: yupResolver(SelfYup),
+		mode: 'onChange',
+	});
+
+	useEffect(() => {
+		clearErrors();
+	}, [selfValue]);
+
+	useEffect(() => {
+		if (!employmentStatusRestrictions.includes(watch('employmentStatus') ?? '')) {
+			setValue('employerName', '');
+			clearErrors('employerName');
+			setValue('workPhone', '');
+			clearErrors('workPhone');
+		}
+	}, [watch('employmentStatus')]);
 
 	const getItemInfo = async () => {
 		let values: any;
@@ -88,11 +166,12 @@ const Self: React.FC<SelfProps> = (props) => {
 				? valuesParse.patientInformation
 				: valuesParse;
 			setPatientInformation(data);
-			console.log('-----------------------data-----------------', data)
+
 			setSaveValue(valuesParse);
 			const dateOfBirth = data?.dateOfBirth ? data?.dateOfBirth : data?.birthdate;
 			const mobile = data?.mobile ? data?.mobile : data?.cellphone;
-			setValue('dateOfBirth', dateOfBirth ? moment(dateOfBirth).format(FORMATS.date6) : '');
+			setValue('dateOfBirth', dateOfBirth);
+			setdateOfBirth(moment(dateOfBirth).format(FORMATS.date6) ?? '');
 			setValue('mobile', mobile);
 			setUserTemp(valuesParse);
 		}
@@ -100,6 +179,7 @@ const Self: React.FC<SelfProps> = (props) => {
 		const valuesMs = await AsyncStorage.getItem('resendsmsCode');
 		setTimeTemps(JSON.parse(valuesMs ?? ''));
 	};
+
 	const {
 		gendersOptions,
 		sexualOrientationOptions,
@@ -108,19 +188,26 @@ const Self: React.FC<SelfProps> = (props) => {
 		preferedLanguageOptions,
 		employmentStatusOptions,
 		doYouHaveOptions,
+		emergencyContactOptions,
 	} = useConsents();
+
 	useEffect(() => {
-		getItemInfo();
+		initializeValues(editAccountdata);
+	}, [editAccountdata]);
+
+	const initializeValues = async (editAccountdata: any) => {
+		await getItemInfo();
 		setValue(
 			'maritalStatus',
-			editAccountdata?.maritalStatus ??
-			editAccountdata?.user?.patientInformation?.maritalStatus,
+			editAccountdata?.maritalStatus 
+			? getMaritalStatusByLanguage(editAccountdata?.maritalStatus)
+			: getMaritalStatusByLanguage(editAccountdata?.user?.patientInformation?.maritalStatus),
 		);
 		setValue(
 			'sex',
-			editAccountdata?.sex?.id == null
+			editAccountdata?.sex == null
 				? editAccountdata?.user?.patientInformation?.sex
-				: editAccountdata?.sex?.id,
+				: editAccountdata?.sex,
 		);
 		setValue(
 			'genderIdentity',
@@ -131,8 +218,8 @@ const Self: React.FC<SelfProps> = (props) => {
 		setValue(
 			'genderIdentityOther',
 			editAccountdata?.genderIdentity?.description ??
-			editAccountdata?.user?.patientInformation?.genderIdentityOther ??
-			'',
+				editAccountdata?.user?.patientInformation?.genderIdentityOther ??
+				'',
 		);
 		setValue(
 			'sexualOrientiation',
@@ -143,8 +230,8 @@ const Self: React.FC<SelfProps> = (props) => {
 		setValue(
 			'sexualOrientiationOther',
 			editAccountdata?.sexualOrientation?.description ??
-			editAccountdata?.user?.patientInformation?.sexualOrientiationOther ??
-			'',
+				editAccountdata?.user?.patientInformation?.sexualOrientiationOther ??
+				'',
 		);
 		setValue(
 			'etnicity',
@@ -161,8 +248,8 @@ const Self: React.FC<SelfProps> = (props) => {
 		setValue(
 			'raceOther',
 			editAccountdata?.race?.description ??
-			editAccountdata?.user?.patientInformation?.raceOther ??
-			'',
+				editAccountdata?.user?.patientInformation?.raceOther ??
+				'',
 		);
 
 		setValue(
@@ -174,8 +261,8 @@ const Self: React.FC<SelfProps> = (props) => {
 		setValue(
 			'languagePreferenceOther',
 			editAccountdata?.preferedLanguage?.description ??
-			editAccountdata?.user?.patientInformation?.languagePreferenceOther ??
-			'',
+				editAccountdata?.user?.patientInformation?.languagePreferenceOther ??
+				'',
 		);
 
 		setValue(
@@ -186,55 +273,48 @@ const Self: React.FC<SelfProps> = (props) => {
 		);
 		setValue(
 			'employerName',
-			editAccountdata?.user?.patientInformation?.employerName
-			?? editAccountdata?.employerName ?? '',
+			editAccountdata?.employerName ??
+				editAccountdata?.user?.patientInformation?.employerName ??
+				'',
 		);
 		setValue(
 			'workPhone',
-			editAccountdata?.employmentStatus?.id == null
-				? editAccountdata?.user?.patientInformation?.workPhone
-				: editAccountdata?.workPhone,
+			editAccountdata?.workPhone ??
+				editAccountdata?.user?.patientInformation?.workPhone ??
+				'',
 		);
 		setValue(
 			'emergencyContactName',
 			editAccountdata?.emergencyContactName ??
-			editAccountdata?.user?.patientInformation?.emergencyContactName ??
-			'',
+				editAccountdata?.user?.patientInformation?.emergencyContactName ??
+				'',
 		);
 		setValue(
 			'emergencyContactLastName',
 			editAccountdata?.emergencyContactLastName ??
-			editAccountdata?.user?.patientInformation?.emergencyContactLastName ??
-			'',
+				editAccountdata?.user?.patientInformation?.emergencyContactLastName ??
+				'',
 		);
 		setValue(
 			'emergencyContactMobile',
 			editAccountdata?.emergencyContactMobile ??
-			editAccountdata?.user?.patientInformation?.emergencyContactMobile ??
-			'',
+				editAccountdata?.user?.patientInformation?.emergencyContactMobile ??
+				'',
 		);
 		setValue(
 			'emergencyRelationship',
-			editAccountdata?.emergencyRelationship ??
-			editAccountdata?.user?.patientInformation?.emergencyRelationship ??
-			'',
+			editAccountdata?.emergencyRelationship?.id == null
+				? editAccountdata?.user?.patientInformation?.emergencyRelationship
+				: editAccountdata?.emergencyRelationship?.id,
 		);
-		console.log('-----editAccountdata--------', editAccountdata)
+	};
 
-	}, [editAccountdata]);
-
-	const {
-		control,
-		handleSubmit,
-		setValue,
-		getValues,
-		watch,
-		setError,
-		formState: { errors, isDirty },
-	} = useForm<SelfList>({
-		resolver: yupResolver(SelfYup),
-		mode: 'onChange',
-	});
+	useEffect(() => {
+		if (watch('emergencyRelationship') !== other) {
+			setValue('emergencyRelationshipOther', '');
+			clearErrors('emergencyRelationshipOther');
+		}
+	}, [watch('emergencyRelationship')]);
 
 	useEffect(() => {
 		const pharmacy = getValues('pharmacy');
@@ -272,7 +352,18 @@ const Self: React.FC<SelfProps> = (props) => {
 	};
 
 	const onValidSubmit = async (values: SelfList) => {
-		saveValue.patientInformation = values;
+		
+		const emergencyRelationshipId: string = values.emergencyRelationship ?? ''
+		saveValue.patientInformation = {
+			...values,
+			maritalStatus: maritalStatusOptions().find( option => option.value === values.maritalStatus)?.label,
+			emergencyRelationship: {
+				id: emergencyRelationshipId,
+				value: emergencyContactOptions[Number(emergencyRelationshipId)].label,
+				description: values.emergencyRelationshipOther
+			}
+		};
+
 		await AsyncStorage.setItem('loadUserInfoByCode', JSON.stringify(saveValue));
 		let info = {
 			tempSessionId: tempSessionId,
@@ -303,6 +394,11 @@ const Self: React.FC<SelfProps> = (props) => {
 					setFirstData({
 						homePhone: patientInformation.homePhone,
 						...newvalue,
+						emergencyRelationship: {
+							id: emergencyRelationshipId,
+							value: emergencyContactOptions[Number(emergencyRelationshipId)].label,
+							description: values.emergencyRelationshipOther
+						},
 						sex: patientInformation.sex ?? patientInformation?.memberGender,
 					});
 				}
@@ -341,10 +437,6 @@ const Self: React.FC<SelfProps> = (props) => {
 		}
 	};
 
-	useEffect(() => {
-		console.log('Initial values', sex);
-	}, [sex]);
-
 	return (
 		<>
 			{patientInformation?.firstName ? (
@@ -352,7 +444,7 @@ const Self: React.FC<SelfProps> = (props) => {
 					<Input
 						icon={<UserIcon />}
 						labelStyle={styles.label}
-						multiline={true}
+						multiline={false}
 						inputStyle={[
 							styles.input,
 							patientInformation.firstName === ''
@@ -374,7 +466,7 @@ const Self: React.FC<SelfProps> = (props) => {
 					<Input
 						icon={<UserIcon />}
 						labelStyle={styles.label}
-						multiline={true}
+						multiline={false}
 						inputStyle={[
 							styles.input,
 							patientInformation.lastName === ''
@@ -396,22 +488,18 @@ const Self: React.FC<SelfProps> = (props) => {
 					<Input
 						icon={<CalendarInputIcon />}
 						labelStyle={styles.label}
+						multiline={true}
 						inputStyle={[
 							styles.input,
 							patientInformation.dateOfBirth === ''
 								? null
 								: { backgroundColor: colors.GRAY_LIGHT_3 },
 						]}
-						value={(patientInformation.dateOfBirth || patientInformation.birthdate) ? moment(patientInformation.dateOfBirth || patientInformation.birthdate).format(FORMATS.date6) : ''}
+						value={dateOfBirthValue}
 						setDisabled={false}
 						placeholder={t('patientRegistration.dateBirth')}
 						label={t('patientRegistration.dateBirth')}
 						name={'dateOfBirth'}
-						control={control}
-						error={errors.dateOfBirth}
-						onChange={(value) => {
-							setValue('dateOfBirth', value.nativeEvent.text);
-						}}
 						editable={patientInformation?.dateOfBirth ? false : true}
 					/>
 					{
@@ -439,24 +527,22 @@ const Self: React.FC<SelfProps> = (props) => {
 					<InputSelect
 						icon={<IconSexual />}
 						control={control}
-						style={{ width: Dimensions.get('window').width * 0.90 }}
+						style={{ width: Dimensions.get('window').width * 0.9 }}
 						labelStyle={styles.label}
 						label={t('patientRegistration.gender')}
 						items={sexOptions}
 						placeholder={t('patientRegistration.placeholders.gender')}
 						onChange={(v, index) => {
-							const selectedItem =
-								index == 0 ? { value: '', label: '' } : sexOptions[index - 1];
-							setValue('sex', selectedItem.value);
+							setValue('sex', getGender(v));							
 						}}
 						name="sex"
-						value={watch('sex')}
+						value={watch('sex') ? watch('sex')[0].toUpperCase() : watch('sex')}
 						error={errors.sex}
 					/>
 					<InputSelect
 						icon={<User />}
 						control={control}
-						style={{ width: Dimensions.get('window').width * 0.90 }}
+						style={{ width: Dimensions.get('window').width * 0.9 }}
 						label={t('createAccount.inputs.sexIdentity')}
 						items={gendersOptions}
 						placeholder={t('patientRegistration.placeholders.genderIdentityConst')}
@@ -477,12 +563,13 @@ const Self: React.FC<SelfProps> = (props) => {
 						<Input
 							keyboardType="name-phone-pad"
 							inputStyle={{
-								width: Dimensions.get('window').width * 0.90,
+								width: Dimensions.get('window').width * 0.9,
 								paddingLeft: 20,
 							}}
 							placeholder={t('createAccount.placeholders.other')}
 							name={'genderIdentityOther'}
 							control={control}
+							multiline={true}
 							error={errors.genderIdentityOther}
 							value={getValues('genderIdentityOther')}
 							onChange={(e) => {
@@ -493,7 +580,7 @@ const Self: React.FC<SelfProps> = (props) => {
 					<InputSelect
 						icon={<User />}
 						control={control}
-						style={{ width: Dimensions.get('window').width * 0.90 }}
+						style={{ width: Dimensions.get('window').width * 0.9 }}
 						label={t('createAccount.inputs.sexualOrientation')}
 						items={sexualOrientationOptions}
 						placeholder={t('patientRegistration.placeholders.sexualOrientation')}
@@ -517,9 +604,10 @@ const Self: React.FC<SelfProps> = (props) => {
 						<Input
 							keyboardType="name-phone-pad"
 							inputStyle={{
-								width: Dimensions.get('window').width * 0.90,
+								width: Dimensions.get('window').width * 0.9,
 								paddingLeft: 20,
 							}}
+							multiline={true}
 							placeholder={t('createAccount.placeholders.other')}
 							name={'sexualOrientiationOther'}
 							control={control}
@@ -533,7 +621,7 @@ const Self: React.FC<SelfProps> = (props) => {
 					<InputSelect
 						icon={<User />}
 						control={control}
-						style={{ width: Dimensions.get('window').width * 0.90 }}
+						style={{ width: Dimensions.get('window').width * 0.9 }}
 						label={t('createAccount.inputs.ethnicity')}
 						items={ethnicityOptions}
 						placeholder={t('patientRegistration.placeholders.ethnicity')}
@@ -550,7 +638,7 @@ const Self: React.FC<SelfProps> = (props) => {
 					<InputSelect
 						icon={<User />}
 						control={control}
-						style={{ width: Dimensions.get('window').width * 0.90 }}
+						style={{ width: Dimensions.get('window').width * 0.9 }}
 						label={t('createAccount.inputs.race')}
 						items={raceOptions}
 						placeholder={t('patientRegistration.placeholders.race')}
@@ -571,9 +659,10 @@ const Self: React.FC<SelfProps> = (props) => {
 					{watch('race') == other && (
 						<Input
 							keyboardType="name-phone-pad"
+							multiline={false}
 							inputStyle={{
-								width: Dimensions.get('window').width * 0.90,
-								paddingLeft: 20,
+								width: Dimensions.get('window').width * 0.9,
+								paddingLeft: 10,
 							}}
 							placeholder={t('createAccount.placeholders.other')}
 							name={'raceOther'}
@@ -588,7 +677,7 @@ const Self: React.FC<SelfProps> = (props) => {
 					<InputSelect
 						icon={<IconLanguage />}
 						control={control}
-						style={{ width: Dimensions.get('window').width * 0.90 }}
+						style={{ width: Dimensions.get('window').width * 0.9 }}
 						label={t('createAccount.inputs.languagePreference')}
 						items={preferedLanguageOptions}
 						placeholder={t('patientRegistration.placeholders.languagePreference')}
@@ -609,7 +698,7 @@ const Self: React.FC<SelfProps> = (props) => {
 						<Input
 							keyboardType="name-phone-pad"
 							inputStyle={{
-								width: Dimensions.get('window').width * 0.90,
+								width: Dimensions.get('window').width * 0.9,
 								paddingLeft: 20,
 							}}
 							placeholder={t('createAccount.placeholders.other')}
@@ -625,27 +714,9 @@ const Self: React.FC<SelfProps> = (props) => {
 					<InputSelect
 						icon={<IconMarital />}
 						control={control}
-						style={{ width: Dimensions.get('window').width * 0.90 }}
+						style={{ width: Dimensions.get('window').width * 0.9 }}
 						label={t('createAccount.inputs.maritalStatus')}
-						items={[
-							{ label: t('maritalStatus.single'), value: t('maritalStatus.single') },
-							{
-								label: t('maritalStatus.married'),
-								value: t('maritalStatus.married'),
-							},
-							{
-								label: t('maritalStatus.divorced'),
-								value: t('maritalStatus.divorced'),
-							},
-							{
-								label: t('maritalStatus.widowed'),
-								value: t('maritalStatus.widowed'),
-							},
-							{
-								label: t('maritalStatus.declined'),
-								value: t('maritalStatus.declined'),
-							},
-						]}
+						items={maritalStatusOptions()}
 						placeholder={t('patientRegistration.placeholders.maritalStatus')}
 						onChange={(v) => {
 							setValue('maritalStatus', v);
@@ -657,7 +728,7 @@ const Self: React.FC<SelfProps> = (props) => {
 					<InputSelect
 						icon={<IconEmployer />}
 						control={control}
-						style={{ width: Dimensions.get('window').width * 0.90 }}
+						style={{ width: Dimensions.get('window').width * 0.9 }}
 						label={t('createAccount.inputs.employmentStatus')}
 						items={employmentStatusOptions}
 						placeholder={t('patientRegistration.placeholders.employmentStatus')}
@@ -668,47 +739,49 @@ const Self: React.FC<SelfProps> = (props) => {
 									: employmentStatusOptions[index - 1];
 
 							setValue('employmentStatus', selectedItem.value);
-							console.log('----selectedItem.value-----', selectedItem.value)
 							setValue('employmentStatusLabel', selectedItem.label);
-							if (v != '1' || v != '2') {
-								setValue('employerName', '');
-								setValue('workPhone', '');
-							}
 						}}
 						name="employmentStatus"
 						error={errors.employmentStatus}
 						value={getValues('employmentStatus')}
 					/>
-					{employmentStatusRestrictions.includes(watch('employmentStatus') ?? '') ?
+					{employmentStatusRestrictions.includes(watch('employmentStatus') ?? '') ? (
 						<>
 							<Input
 								control={control}
 								icon={<User />}
 								keyboardType="name-phone-pad"
-								inputStyle={{ width: Dimensions.get('window').width * 0.90 }}
+								inputStyle={{ width: Dimensions.get('window').width * 0.9 }}
 								placeholder={t('patientRegistration.placeholders.employerName')}
 								label={t('createAccount.inputs.employerName')}
 								name={'employerName'}
 								error={errors.employerName}
-								value={editAccountdata?.user?.patientInformation?.employerName
-									?? editAccountdata?.employerName ?? ''}
+								value={watch('employerName')}
+								onChange={(e) => {
+									setValue('employerName', e.nativeEvent.text);
+								}}
+								multiline={false}
 							/>
 							<Input
 								control={control}
 								icon={<MobileAlt />}
 								keyboardType="numeric"
 								mask={MASK.phone}
-								inputStyle={{ width: Dimensions.get('window').width * 0.90 }}
+								inputStyle={{ width: Dimensions.get('window').width * 0.9 }}
 								placeholder={t('patientRegistration.placeholders.workPhone')}
 								label={t('createAccount.inputs.workPhone')}
 								name={'workPhone'}
 								error={errors.workPhone}
 								autoCorrect={false}
-								value={editAccountdata?.user?.patientInformation?.workPhone
-									?? editAccountdata?.workPhone ?? ''}
+								value={watch('workPhone')}
+								onChange={(e) => {
+									setValue('workPhone', e.nativeEvent.text);
+								}}
 							/>
-						</> : <></>
-					}
+						</>
+					) : (
+						<></>
+					)}
 
 					<Input
 						icon={<Email />}
@@ -716,6 +789,7 @@ const Self: React.FC<SelfProps> = (props) => {
 						inputStyle={[styles.input, { backgroundColor: colors.GRAY_LIGHT_3 }]}
 						value={patientInformation.email}
 						setDisabled={false}
+						multiline={false}
 						placeholder={t('patientRegistration.eMail')}
 						label={t('patientRegistration.eMail')}
 						name={'email'}
@@ -729,7 +803,7 @@ const Self: React.FC<SelfProps> = (props) => {
 						inputStyle={[styles.input, { backgroundColor: colors.GRAY_LIGHT_3 }]}
 						value={patientInformation.mobile}
 						placeholder={t('patientRegistration.mobile')}
-						label={t('personalInformation.mobile')}
+						label={t('patientRegistration.placeholders.mobileGuarant')}
 						name={'mobile'}
 						control={control}
 						error={errors.mobile}
@@ -737,11 +811,15 @@ const Self: React.FC<SelfProps> = (props) => {
 						editable={false}
 					/>
 					<Input
-						icon={<MobileAlt />}
+						icon={<PhoneHome />}
 						labelStyle={styles.label}
 						inputStyle={styles.input}
-						value={patientInformation?.cellphone ?? editAccountdata?.user?.patientInformation?.homePhone
-							?? editAccountdata?.homePhone ?? ''}
+						value={
+							patientInformation?.cellphone ??
+							editAccountdata?.user?.patientInformation?.homePhone ??
+							editAccountdata?.homePhone ??
+							''
+						}
 						setDisabled={false}
 						placeholder={t('patientRegistration.placeholders.homePhone')}
 						label={t('patientRegistration.home')}
@@ -753,6 +831,7 @@ const Self: React.FC<SelfProps> = (props) => {
 					<Input
 						icon={<MapMarkerAlt />}
 						labelStyle={styles.label}
+						multiline={false}
 						inputStyle={[styles.input]}
 						value={patientInformation?.address1 ?? ''}
 						setDisabled={patientInformation?.address1 ? false : true}
@@ -766,6 +845,7 @@ const Self: React.FC<SelfProps> = (props) => {
 						icon={<MapMarkerAlt />}
 						labelStyle={styles.label}
 						inputStyle={styles.input}
+						multiline={false}
 						value={patientInformation.address2 ?? ''}
 						setDisabled={patientInformation?.address2 ? false : true}
 						placeholder={t('patientRegistration.placeholders.address2')}
@@ -778,6 +858,7 @@ const Self: React.FC<SelfProps> = (props) => {
 						icon={<MapMarkerAlt />}
 						labelStyle={styles.label}
 						inputStyle={styles.input}
+						multiline={false}
 						value={patientInformation.city ?? ''}
 						setDisabled={patientInformation?.city ? false : true}
 						placeholder={t('patientRegistration.city')}
@@ -831,7 +912,7 @@ const Self: React.FC<SelfProps> = (props) => {
 						error={errors.ssn}
 					/>
 					<FileUpload
-						style={{ width: Dimensions.get('window').width * 0.90 }}
+						style={{ width: Dimensions.get('window').width * 0.9 }}
 						placeholder={t('createAccount.fileUpload.documentFile')}
 						helperText={t('createAccount.fileUpload.documentTypes')}
 						onChange={(v) => onchangeFile(v)}
@@ -852,6 +933,7 @@ const Self: React.FC<SelfProps> = (props) => {
 						icon={<User />}
 						labelStyle={styles.label}
 						inputStyle={styles.input}
+						multiline={false}
 						placeholder={t('patientRegistration.placeholders.emergencyName')}
 						label={t('createAccount.inputs.emergencyName')}
 						name={'emergencyContactName'}
@@ -866,6 +948,7 @@ const Self: React.FC<SelfProps> = (props) => {
 						icon={<User />}
 						labelStyle={styles.label}
 						inputStyle={styles.input}
+						multiline={false}
 						placeholder={t('patientRegistration.placeholders.emergencyLastName')}
 						label={t('createAccount.inputs.emergencyLastName')}
 						name={'emergencyContactLastName'}
@@ -896,25 +979,38 @@ const Self: React.FC<SelfProps> = (props) => {
 
 					{/*  */}
 					<InputSelect
+						icon={<IconMarital />}
 						control={control}
-						error={errors.emergencyRelationship}
-						style={{ width: Dimensions.get('window').width * 0.90 }}
+						style={{ width: Dimensions.get('window').width * 0.9 }}
 						label={t('createAccount.inputs.emergencyRelationship')}
-						labelStyle={[styles.label, { marginTop: 20 }]}
-						items={patientRelationship.map((patientRelationhip, index) => {
-							return {
-								key: index,
-								label: t(`createAccount.patientRelationship.${patientRelationhip}`),
-								value: index,
-							};
-						})}
-						onChange={(v) => {
+						items={emergencyContactOptions}
+						placeholder={t('patientRegistration.placeholders.emergencyRelationship')}
+						onChange={(v, index) => {
 							setValue('emergencyRelationship', v);
 						}}
-						value={getValues('emergencyRelationship')}
-						placeholder={t('patientRegistration.placeholders.emergencyRelationship')}
-						name={'emergencyRelationship'}
+						name="emergencyRelationship"
+						error={errors.emergencyRelationship}
+						value={getValues('emergencyRelationship')?.toString()}
 					/>
+					{watch('emergencyRelationship') == 'O' && (
+						<Input
+							keyboardType="ascii-capable"
+							multiline={true}
+							inputStyle={{
+								width: Dimensions.get('window').width * 0.9,
+								paddingLeft: 20,
+							}}
+							placeholder={t('createAccount.placeholders.other')}
+							name={'emergencyRelationshipOther'}
+							control={control}
+							error={errors.emergencyRelationshipOther}
+							value={getValues('emergencyRelationshipOther')}
+							onChange={(e) => {
+								setValue('emergencyRelationshipOther', e.nativeEvent.text);
+							}}
+						/>
+					)}
+
 					{/*  */}
 					<Text style={styles.textConsents} maxFontSizeMultiplier={1.3}>
 						{t('createAccount.inputs.emergencyContact')}
@@ -963,7 +1059,7 @@ const Self: React.FC<SelfProps> = (props) => {
 								}}
 								maxFontSizeMultiplier={1.3}
 							>
-								{errors.emergencyContact?.message}
+								{t(`errors.required`)}
 							</Text>
 						</View>
 					)}
@@ -987,7 +1083,6 @@ const Self: React.FC<SelfProps> = (props) => {
 								</Text>
 							}
 						/>
-
 					</View>
 					{watch('acceptedFriend') == true && (
 						<>
@@ -1006,6 +1101,7 @@ const Self: React.FC<SelfProps> = (props) => {
 								inputStyle={styles.input}
 								placeholder={t('createAccount.placeholders.nameFriendOne')}
 								label={t('createAccount.inputs.nameFriendOne')}
+								multiline={true}
 								name={'nameFriendOne'}
 								control={control}
 								error={errors.nameFriendOne}
@@ -1013,6 +1109,7 @@ const Self: React.FC<SelfProps> = (props) => {
 							<Input
 								icon={<User />}
 								labelStyle={styles.label}
+								multiline={true}
 								inputStyle={styles.input}
 								placeholder={t('createAccount.placeholders.relationShipFriendOne')}
 								label={t('createAccount.inputs.relationShipFriendOne')}
@@ -1043,6 +1140,7 @@ const Self: React.FC<SelfProps> = (props) => {
 								inputStyle={styles.input}
 								placeholder={t('createAccount.placeholders.nameFriendTwo')}
 								label={t('createAccount.inputs.nameFriendTwo')}
+								multiline={true}
 								name={'nameFriendTwo'}
 								control={control}
 								error={errors.nameFriendTwo}
@@ -1050,6 +1148,7 @@ const Self: React.FC<SelfProps> = (props) => {
 							<Input
 								icon={<User />}
 								labelStyle={styles.label}
+								multiline={true}
 								inputStyle={styles.input}
 								placeholder={t('createAccount.placeholders.relationShipFriendTwo')}
 								label={t('createAccount.inputs.relationShipFriendTwo')}
@@ -1074,7 +1173,7 @@ const Self: React.FC<SelfProps> = (props) => {
 							<InputSelect
 								icon={<User />}
 								control={control}
-								style={{ width: Dimensions.get('window').width * 0.90 }}
+								style={{ width: Dimensions.get('window').width * 0.9 }}
 								label={t('createAccount.inputs.doYouHave')}
 								items={doYouHaveOptions}
 								placeholder={t('createAccount.placeholders.doYouHave')}
@@ -1088,6 +1187,7 @@ const Self: React.FC<SelfProps> = (props) => {
 								icon={<User />}
 								labelStyle={styles.label}
 								inputStyle={styles.input}
+								multiline={true}
 								placeholder={t('createAccount.placeholders.legalGuardianName')}
 								label={t('createAccount.inputs.legalGuardianName')}
 								name={'legalGuardianName'}
@@ -1112,7 +1212,7 @@ const Self: React.FC<SelfProps> = (props) => {
 						</>
 					)}
 
-					<View style={{ width: Dimensions.get('window').width * 0.90, marginBottom: 20 }}>
+					<View style={{ width: Dimensions.get('window').width * 0.9, marginBottom: 20 }}>
 						<Text style={styles.titleRadioButtons} maxFontSizeMultiplier={1.3}>
 							{t('patientRegistration.tittlePharmacy')}
 						</Text>
@@ -1121,10 +1221,15 @@ const Self: React.FC<SelfProps> = (props) => {
 						icon={<MapMarkerAlt />}
 						mask={MASK.zip}
 						labelStyle={styles.label}
-						inputStyle={[styles.input, authPharmacy === false ? { backgroundColor: colors.GRAY_LIGHT_3 } : null]}
+						inputStyle={[
+							styles.input,
+							authPharmacy === false
+								? { backgroundColor: colors.GRAY_LIGHT_3 }
+								: null,
+						]}
 						editable={authPharmacy === true}
 						onChangeText={(v) => {
-							changePharmacyZip(v)
+							changePharmacyZip(v);
 						}}
 						placeholder={t('patientRegistration.pharmacyZip')}
 						label={`${t('patientRegistration.pharmacyZip')} * `}
@@ -1135,8 +1240,10 @@ const Self: React.FC<SelfProps> = (props) => {
 						icon={<IconPharmacy />}
 						labelStyle={styles.label}
 						disabled={authPharmacy === false}
-						style={{ width: Dimensions.get('window').width * 0.90 }}
-						inputStyle={authPharmacy === false ? { backgroundColor: colors.GRAY_LIGHT_3 } : null}
+						style={{ width: Dimensions.get('window').width * 0.9 }}
+						inputStyle={
+							authPharmacy === false ? { backgroundColor: colors.GRAY_LIGHT_3 } : null
+						}
 						label={t('patientRegistration.pharmacy')}
 						items={listOfPharmacies.map((data, i) => {
 							return { key: i ?? '', label: data ?? '', value: data ?? '' };
@@ -1151,33 +1258,52 @@ const Self: React.FC<SelfProps> = (props) => {
 						value={updateNamePharmacy ? '' : undefined}
 					/>
 					<RadioGroup
-						style={{ width: Dimensions.get('window').width * 0.90, marginTop: 15 }}
+						style={{ width: Dimensions.get('window').width * 0.9, marginTop: 15 }}
 						onChange={(v) => {
 							if (v == 2) {
 								const pharmacy = getValues('pharmacy');
 								setValue('pharmacy', pharmacy ? pharmacy : 'NN');
-								setError('pharmacy', {})
+								setError('pharmacy', {});
 							} else {
 								const pharmacy = getValues('pharmacy');
 								setValue('pharmacy', pharmacy == 'NN' ? 'NN' : pharmacy);
 							}
-							setAuthPharmacy(v == 1 ? true : false)
+							setAuthPharmacy(v == 1 ? true : false);
 							setValue('auth', v == 1 ? true : false);
-							setError('auth', {})
-						}}>
+							setError('auth', {});
+						}}
+					>
 						<RadioButton
 							value={1}
 							textStyle={styles.item}
-							title={t('patientRegistration.radioBtnTrue')} />
+							title={t('patientRegistration.radioBtnTrue')}
+						/>
 						<RadioButton
 							value={2}
 							style={{ marginTop: 10 }}
 							textStyle={styles.item}
-							title={t('patientRegistration.radioBtnFalse')} />
+							title={t('patientRegistration.radioBtnFalse')}
+						/>
 					</RadioGroup>
 					{errors.auth?.message && (
-						<View style={{ marginBottom: 10, width: Dimensions.get('window').width * 0.90, alignSelf: 'center', marginTop: -10 }}>
-							<Text style={{ color: colors.DANGER, fontFamily: 'proxima-regular', fontSize: 12 }} maxFontSizeMultiplier={1.3}>{t(`errors.required`)}</Text>
+						<View
+							style={{
+								marginBottom: 10,
+								width: Dimensions.get('window').width * 0.9,
+								alignSelf: 'center',
+								marginTop: -10,
+							}}
+						>
+							<Text
+								style={{
+									color: colors.DANGER,
+									fontFamily: 'proxima-regular',
+									fontSize: 12,
+								}}
+								maxFontSizeMultiplier={1.3}
+							>
+								{t(`errors.required`)}
+							</Text>
 						</View>
 					)}
 
@@ -1206,3 +1332,15 @@ const Self: React.FC<SelfProps> = (props) => {
 };
 
 export default Self;
+
+const pickerSelectStyles = StyleSheet.create({
+	inputIOS: {
+		paddingLeft: 20,
+	},
+	inputAndroid: {
+		fontSize: 14,
+		color: '#757575',
+		paddingRight: 40,
+		paddingLeft: 15,
+	},
+});

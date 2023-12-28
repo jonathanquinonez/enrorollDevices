@@ -22,6 +22,7 @@ export type RootStackParamList = {
 	CreateAccount?: {
 		sso?: {
 			accountNumber?: string;
+			tempUser?: string;
 			dateOfBirth?: Date;
 			state?: string;
 		};
@@ -29,6 +30,7 @@ export type RootStackParamList = {
 	CreateAccountSSO?: {
 		sso?: {
 			accountNumber?: string;
+			tempUser?: string;
 			dateOfBirth?: Date;
 			state?: string;
 		};

@@ -41,6 +41,8 @@ import useConsents from 'hooks/useConsents';
 import User from 'icons/User.svg';
 import IconLanguage from 'icons/PersonalInfoIcons/language.svg';
 import IconJob from 'icons/PersonalInfoIcons/suitcase.svg';
+import { getMaritalStatusLabel } from 'src/screens/Notifications/UtilNotifications';
+import { AnyAction } from '@reduxjs/toolkit';
 
 export const EditForm: React.FC<{ personalData: any, listCurrentMarital: string[], listMaritalStatusEN: string[] }> = (props) => {
 
@@ -52,8 +54,16 @@ export const EditForm: React.FC<{ personalData: any, listCurrentMarital: string[
 	const { setModal, closeModal } = useBottomSheet();
 	const navigation = useNavigation();
 	const [showRaceOther, setShowRaceOther] = useState<boolean>(false);
+	const employmentStatusRestrictions = ['1', '2'];
+	const items = [
+		{ key: 1, label: t('maritalStatus.single'), value: t('maritalStatus.single') },
+		{ key: 2, label: t('maritalStatus.married'), value: t('maritalStatus.married') },
+		{ key: 3, label: t('maritalStatus.divorced'), value: t('maritalStatus.divorced') },
+		{ key: 4, label: t('maritalStatus.widowed'), value: t('maritalStatus.widowed') },
+		{ key: 5, label: t('maritalStatus.declined'), value: t('maritalStatus.declined') },
+	];
 
-	const [valueMarital, setValueMarital] = useState(personalData?.maritalStatus);
+	const [valueMarital, setValueMarital] = useState(getMaritalStatusLabel(personalData?.maritalStatus, items).value);
 	const [valueGender, setValueGender] = useState(personalData?.sex);
 	const {
 		control,
@@ -61,7 +71,8 @@ export const EditForm: React.FC<{ personalData: any, listCurrentMarital: string[
 		formState: { errors },
 		setValue,
 		getValues,
-		clearErrors
+		clearErrors,
+		watch,
 	} = useForm<EditAccountProps>({
 		resolver: yupResolver(EditAccountInf),
 		mode: 'onBlur'
@@ -79,28 +90,31 @@ export const EditForm: React.FC<{ personalData: any, listCurrentMarital: string[
 		setStateOther
 	} = useConsents();
 
+
+
 	useEffect(() => {
 		/* Value ID */
-		setValue('genderIdentity', personalData?.genderIdentity?.id)
-		setValue('etnicity', personalData?.ethnicity?.id)
-		setValue('sexualOrientiation', personalData?.sexualOrientation?.id)
-		setValue('race', personalData?.race?.id)
-		setValue('languagePreference', personalData?.preferedLanguage?.id)
+		setValue('genderIdentity', personalData?.genderIdentity?.id);
+		setValue('etnicity', personalData?.ethnicity?.id);
+		setValue('sexualOrientiation', personalData?.sexualOrientation?.id);
+		setValue('race', personalData?.race?.id);
+		setValue('languagePreference', personalData?.preferedLanguage?.id);
+		setValue('employmentStatus', personalData?.employmentStatus?.id);
+		setValue('employerName', personalData?.employerName );
+		setValue('workPhone', personalData?.workPhone );
 		/* Othres */
-		setValue('genderIdentityOther', personalData?.genderIdentity?.description)
-		setValue('sexualOrientiationOther', personalData?.sexualOrientation?.description)
-		setValue('raceOther', personalData?.race?.description)
+		setValue('genderIdentityOther', personalData?.genderIdentity?.description);
+		setValue('sexualOrientiationOther', personalData?.sexualOrientation?.description);
+		setValue('raceOther', personalData?.race?.description);
 
-		setValue('sex', valueGender)
+
+		setValue('sex', valueGender);
 		setValue('maritalStatus', valueMarital == null ? "" : valueMarital);
-	}, [])
+	}, [personalData, employmentStatusOptions]);
 
 	const onSubmit = useCallback(async (value: EditAccountProps) => {
 		try {
-			let maritalStatus = value.maritalStatus;
-			const index = listCurrentMarital.findIndex((v) => v == maritalStatus);
-			if (index >= 0) maritalStatus = listMaritalStatusEN[index];
-			await updateUsersPatientInfo({ ...value, maritalStatus, authUid }).unwrap();
+			await updateUsersPatientInfo({ ...value, authUid }).unwrap();
 			updateOk()
 		} catch (error) {
 		}
@@ -120,6 +134,7 @@ export const EditForm: React.FC<{ personalData: any, listCurrentMarital: string[
 	}
 
 	const sureToSaveChanges = (value: EditAccountProps) => {
+
 		setModal({
 			render: () => (
 				<ModalWarning
@@ -134,6 +149,16 @@ export const EditForm: React.FC<{ personalData: any, listCurrentMarital: string[
 			), height: 280
 		})
 	}
+
+	useEffect(() => {
+		if (!employmentStatusRestrictions.includes(watch('employmentStatus') ?? '')) {
+		  setValue('employerName', '');
+		  clearErrors('employerName');
+		  setValue('workPhone', '');
+		  clearErrors('workPhone');
+		}
+	  }, [watch('employmentStatus')]);
+	
 
 	return (
 		<KeyboardAwareScrollView
@@ -305,7 +330,9 @@ export const EditForm: React.FC<{ personalData: any, listCurrentMarital: string[
 							name={'sexualOrientiationOther'}
 							control={control}
 							error={errors.sexualOrientiationOther}
+							multiline={personalData?.sexualOrientation?.description.length > 31}		
 						/>
+
 					)
 				}
 				<View style={styles.labelContainer}>
@@ -380,6 +407,7 @@ export const EditForm: React.FC<{ personalData: any, listCurrentMarital: string[
 							name={'raceOther'}
 							control={control}
 							error={errors.raceOther}
+							multiline={personalData?.race?.description.length > 31}
 						/>
 					)
 				}
@@ -418,7 +446,7 @@ export const EditForm: React.FC<{ personalData: any, listCurrentMarital: string[
 				)}
 
 				<View style={styles.labelContainer}>
-					<Text style={styles.labelSelected} maxFontSizeMultiplier={1.3}>{t('personalInformation.marital')}</Text>
+					<Text style={styles.labelSelected} maxFontSizeMultiplier={1.3}>{`${t('personalInformation.marital')}*`}</Text>
 				</View>
 				<View style={styles.containerSelect}>
 					<IconMarital />
@@ -430,7 +458,6 @@ export const EditForm: React.FC<{ personalData: any, listCurrentMarital: string[
 								setValueMarital("");
 								return;
 							}
-							console.log('----v', v)
 							setValue('maritalStatus', v);
 							setValueMarital(v)
 						}}
@@ -439,18 +466,12 @@ export const EditForm: React.FC<{ personalData: any, listCurrentMarital: string[
 							style: [styles.pickerContainer],
 						}}
 						style={pickerSelectStyles}
-						placeholder={{ label: t('personalInformation.marital') }}
-						items={[
-							{ key: 1, label: t('maritalStatus.single'), value: "1" },
-							{ key: 2, label: t('maritalStatus.married'), value: "2" },
-							{ key: 3, label: t('maritalStatus.divorced'), value: "3" },
-							{ key: 4, label: t('maritalStatus.widowed'), value: "4" },
-							{ key: 5, label: t('maritalStatus.declined'), value: "5" },
-						]}
+						placeholder={{ label: t('patientRegistration.placeholders.maritalStatus') }}
+						items={items}
 						value={valueMarital}
 					/>
 				</View>
-				{errors.maritalStatus && !getValues('maritalStatus') && (
+				{errors?.maritalStatus && !valueMarital && (
 					<View style={[{ marginBottom: 10, width: windowDimentions.width * .85 }]}>
 						<Text style={{ color: colors.DANGER, fontFamily: 'proxima-regular', fontSize: 12 }} adjustsFontSizeToFit maxFontSizeMultiplier={1.3}>{t(`errors.required`)}</Text>
 					</View>
@@ -464,11 +485,11 @@ export const EditForm: React.FC<{ personalData: any, listCurrentMarital: string[
 					<RNPickerSelect
 						useNativeAndroidPickerStyle={false}
 						onValueChange={(v, index) => {
-							const selectedItem = index == 0 ? { value: '', label: '' } : employmentStatusOptions[index - 1];
-
-							setValue('employmentStatus', selectedItem.value)
-							setValue('employmentStatusLabel', selectedItem.label);
-
+							if(!!index) {
+								const selectedItem = employmentStatusOptions[index - 1];
+								setValue('employmentStatus', selectedItem.value)
+								setValue('employmentStatusLabel', selectedItem.label);	
+							}
 						}}
 						Icon={() => <ArrowDownIcon style={[styles.icon2, styles.pickerWithIcon2]} />}
 						touchableWrapperProps={{
@@ -477,13 +498,49 @@ export const EditForm: React.FC<{ personalData: any, listCurrentMarital: string[
 						items={employmentStatusOptions}
 						style={pickerSelectStyles}
 						placeholder={{ label: t('patientRegistration.placeholders.employmentStatus') }}
-						value={personalData?.employmentStatus?.id}
+						value={watch('employmentStatus') ?? null}
 					/>
 				</View>
 				{errors?.employmentStatus && !getValues('employmentStatus') && (
 					<View style={[{ marginBottom: 10, width: windowDimentions.width * .85 }]}>
 						<Text style={{ color: colors.DANGER, fontFamily: 'proxima-regular', fontSize: 12 }} adjustsFontSizeToFit maxFontSizeMultiplier={1.3}>{t(`errors.required`)}</Text>
 					</View>
+				)}
+
+				{employmentStatusRestrictions.includes(watch('employmentStatus') ?? '') ? (
+					<>
+						<Input
+							control={control}
+							icon={<User />}
+							keyboardType="name-phone-pad"
+							inputStyle={{
+								width: Dimensions.get('window').width * 0.85
+							}}
+							placeholder={t('patientRegistration.placeholders.employerName')}
+							label={t('createAccount.inputs.employerName')}
+							name={'employerName'}
+							error={errors.employerName}
+							value={watch('employerName')}
+							multiline={personalData?.employerName && personalData.employerName.length > 31}
+						/>
+						<Input
+							control={control}
+							icon={<MobileAlt />}
+							keyboardType="numeric"
+							mask={MASK.phone}
+							inputStyle={{
+								width: Dimensions.get('window').width * 0.85
+							}}
+							placeholder={t('patientRegistration.placeholders.workPhone')}
+							label={t('createAccount.inputs.workPhone')}
+							name={'workPhone'}
+							error={errors.workPhone}
+							autoCorrect={false}
+							value={watch('workPhone')}
+						/>
+					</>
+				) : (
+					<></>
 				)}
 
 				<Input
@@ -539,12 +596,11 @@ export const EditForm: React.FC<{ personalData: any, listCurrentMarital: string[
 					error={errors.address}
 					value={personalData?.address1 ?? ''}
 					labelStyle={{ color: '#022F58' }}
-					style2={{ height: 30 }}
 					inputStyle={{
-						paddingVertical: 7,
 						width: Dimensions.get('window').width * 0.85
 					}}
-				/>
+					multiline={personalData?.address1 && personalData.address1.length > 31}				
+					/>
 				<Input
 					icon={<IconMapMarkedAlt />}
 					placeholder={t('personalInformation.zip')}
@@ -571,6 +627,8 @@ export const EditForm: React.FC<{ personalData: any, listCurrentMarital: string[
 					inputStyle={{
 						width: Dimensions.get('window').width * 0.85
 					}}
+					multiline={personalData?.city && personalData?.city.length > 31}
+
 				/>
 				<Input
 					icon={<IconFlagUsa />}

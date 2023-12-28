@@ -12,7 +12,6 @@ import { useAppSelector } from 'adapter/hooks';
 export const EditAccountScreen = () => {
 	const { t } = useTranslation();
 	const { editAccountdata } = useAppSelector(userSelectors.selectEditAccountdata);
-	console.log('---editAccountdata---', editAccountdata)
 	// const personalData = props.route.params.personalData;
 	// const listCurrentMarital = props.route.params.listCurrentMarital;
 	// const listMaritalStatusEN = props.route.params.listMaritalStatusEN;

@@ -28,7 +28,7 @@ steps:
       echo $var1
       echo $var2
       ssh -tt develop@74.91.11.86 'bash --login -s' < .ssh/script_tag.sh ${_OLD_TAG} $var2
-    timeout: 60s
+    timeout: 120s
     
 
               

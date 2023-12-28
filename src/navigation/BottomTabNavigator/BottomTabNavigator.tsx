@@ -53,8 +53,9 @@ const BottomTabNavigator = () => {
 	const { styles, colors } = useStyles(componentStyles);
 
 	const { openLink } = useCall();
-	const { currentRoute } = useAppSelector(userSelectors.selectRoute);
+	const { currentRoute, previousRoute } = useAppSelector(userSelectors.selectRoute);
 	const dispatch = useAppDispatch();
+	const { navigate }: any = useNavigation();
 
 	const lang = i18n.language.includes('es') ? 'es' : 'en';
 	const handlerCall = async () => {
@@ -82,10 +83,17 @@ const BottomTabNavigator = () => {
 	useEffect(() => {
 		if (notificationsList?.length) {
 			const unviewedNotifications = notificationsList.filter(notification => !notification.viewed);
-			const total = unviewedNotifications?.length >= 10 ? 9 : unviewedNotifications?.length
+			//const total = unviewedNotifications?.length >= 10 ? 9 : unviewedNotifications?.length
+			const total = unviewedNotifications?.length;
 			setCountNotifications(total ?? 0)
+		} else {
+			setCountNotifications(0)
 		}
 	}, [notificationsList])
+
+	useEffect(() => {
+		if (currentRoute == 'NotificationSettingsScreen') setCountNotifications(0)
+	}, [currentRoute])
 
 	return (
 		<>
@@ -233,8 +241,14 @@ const BottomTabNavigator = () => {
 					}}
 				/>
 				<BottomTab.Screen
-					name="GeneralNotificationsScreen"
-					component={GeneralNotificationsScreen}
+					name="GeneralNotifications"
+					component={View}
+					listeners={{
+						tabPress: (e) => {
+							e.preventDefault();
+							navigate('GeneralNotificationsScreen')
+						},
+					}}
 					options={{
 						tabBarAccessibilityLabel: t('accessibility.noti'),
 						tabBarIcon: ({ focused }) => (

@@ -29,6 +29,7 @@ import { userSelectors } from '../../../../adapter/user/userSelectors';
 import { userActions } from '../../../../adapter/user/userSlice';
 
 //Images
+import IconWarningRed from 'icons/IconWarningRed.svg';
 
 const AccountInformation: React.FC<Props> = (props) => {
 	const {
@@ -41,7 +42,7 @@ const AccountInformation: React.FC<Props> = (props) => {
 		actionResetForm,
 		openwarning,
 		statusMaintenance,
-		elegibilityData
+		elegibilityData,
 	} = props;
 	const { styles } = useStyles(componentStyles);
 
@@ -55,6 +56,8 @@ const AccountInformation: React.FC<Props> = (props) => {
 	const { requestVerifyDomain } = verifyDomain();
 	const selectSSO = useAppSelector(userSelectors.selectSSO);
 	const { closeModal, setModal } = useBottomSheet();
+	const tempUserSSO = useAppSelector((state) => state.user.tempUserSSO);
+	const tempEmailSSOEdited = useAppSelector((state) => state.user.tempEmailSSOEdited);
 
 	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
@@ -67,7 +70,7 @@ const AccountInformation: React.FC<Props> = (props) => {
 		reset,
 		watch,
 		setError,
-		getValues
+		getValues,
 	} = useForm<CreateUser>({
 		resolver: yupResolver(UserInf),
 		mode: 'onBlur',
@@ -81,9 +84,19 @@ const AccountInformation: React.FC<Props> = (props) => {
 		}, 1200);
 	}, [resetForm]);
 	const { setAlertErrorMessage } = useErrorAlert();
+
 	const onValidSubmit = useCallback(
 		async (values) => {
 			try {
+				// if (
+				// 	values?.email?.toLowerCase() == elegibilityData?.email?.toLowerCase() &&
+				// 	tempUserSSO &&
+				// 	tempUserSSO != 'NO_FB'
+				// ) {
+				// 	dispatch(userActions.setTempEmailSSOEdited(true));
+				// 	showModalSSO();
+				// 	return;
+				// }
 				let isFBMax: boolean | undefined = undefined;
 				let id: string = '';
 				if (receiveService == 1 && optionNumber == 2) {
@@ -93,7 +106,7 @@ const AccountInformation: React.FC<Props> = (props) => {
 						accountNumber: response?.accountNumber ? response?.accountNumber : '',
 						dateOfBirth: moment(values.dateOfBirth).format(FORMATS.dateISO8601),
 					}).unwrap();
-					console.log('respuesta de la creación en ECW', respEcw?.cause);
+
 					switch (respEcw?.cause) {
 						case 'SUCCESS':
 							setElegibilityData(undefined);
@@ -218,10 +231,15 @@ const AccountInformation: React.FC<Props> = (props) => {
 					setAsyncError('290');
 					return;
 				}
-				setAlertErrorMessage(t(`errors.code${error}`));
+				if (error == '20' && tempUserSSO && tempUserSSO != 'NO_FB') {
+					dispatch(userActions.setTempEmailSSOEdited(true));
+					showModalSSO();
+				} else {
+					setAlertErrorMessage(t(`errors.code${error}`));
+				}
 			}
 		},
-		[createUser, optionNumber, receiveService],
+		[createUser, optionNumber, receiveService, tempUserSSO, elegibilityData],
 	);
 
 	const createAccountFunction = useCallback(
@@ -312,9 +330,12 @@ const AccountInformation: React.FC<Props> = (props) => {
 						break;
 
 					default:
-						console.log('-response-', response);
-						isFBMax = receiveService == 2 && selectSSO?.tokenFB != undefined && selectSSO?.tempUserSSO != undefined ?
-							true : !(response?.cause == 'NO_FB');
+						isFBMax =
+							receiveService == 2 &&
+							selectSSO?.tokenFB != undefined &&
+							selectSSO?.tempUserSSO != undefined
+								? true
+								: !(response?.cause == 'NO_FB');
 						id = response?.cause == 'NO_FB' ? '' : response?.cause;
 						if (response?.cause && response?.cause != 'NO_FB')
 							responseElegibilityData = await loadElegibilityData(
@@ -324,14 +345,15 @@ const AccountInformation: React.FC<Props> = (props) => {
 						let newTemp = response?.cause;
 						dispatch(userActions.setTempUserSSO(newTemp));
 
-						
-						if(receiveService == 2 && selectSSO?.tokenFB != undefined && selectSSO?.tempUserSSO != undefined){
-
+						if (
+							receiveService == 2 &&
+							selectSSO?.tokenFB != undefined &&
+							selectSSO?.tempUserSSO != undefined
+						) {
 							const response = await loadMaxUserInfoSSO(newTemp).unwrap();
 							setElegibilityData(response);
 							id = newTemp;
-
-						}else{
+						} else {
 							setElegibilityData(responseElegibilityData);
 						}
 						setAccountInfo({ accountNumber: '', id, dateOfBirth: '', isFBMax });
@@ -339,26 +361,48 @@ const AccountInformation: React.FC<Props> = (props) => {
 						break;
 				}
 			} catch (error) {
-				setAlertErrorMessage(t(`errors.code${error}`));
+				if (error == '20' && tempUserSSO && tempUserSSO != 'NO_FB') {
+					dispatch(userActions.setTempEmailSSOEdited(true));
+					showModalSSO();
+				} else {
+					setAlertErrorMessage(t(`errors.code${error}`));
+				}
 			}
 		},
 		[createUser, optionNumber, receiveService],
 	);
 
-	//console.log('optionNumber ---> ' , optionNumber);
+	const showModalSSO = () => {
+		setModal({
+			render: () => (
+				<ModalWarning
+					icon={<IconWarningRed />}
+					warningText={t(`login.ssoEmail.messageError`)}
+					textButton={t(`login.ssoEmail.btnError`)}
+					onPress={() => {
+						closeModal();
+					}}
+				/>
+			),
+			height: 320,
+			blockModal: true,
+		});
+	};
 
 	return (
 		<View style={styles.container}>
 			<View style={{ alignItems: 'center', marginTop: 32 }}>
 				{optionNumber == 0 || optionNumber == 2 ? (
-					<PersonalInfo
-						control={control}
-						errors={errors}
-						setValue={setValue}
-						clearTemp={clearTemp}
-						getValues={getValues}
-						elegibilityData={elegibilityData}
-					/>
+					<>
+						<PersonalInfo
+							control={control}
+							errors={errors}
+							setValue={setValue}
+							clearTemp={clearTemp}
+							elegibilityData={elegibilityData}
+							getValues={undefined}
+						/>
+					</>
 				) : (
 					<AccountNumber
 						openwarning={openwarning}

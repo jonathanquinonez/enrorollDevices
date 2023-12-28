@@ -183,9 +183,7 @@
 	"consents": {
 		"modalTitle": "Nuestros consentimientos han cambiado",
 		"modalSubTitle": "Por favor acepta la nueva versión para poder continuar",
-		"enrollDeviceModal": "Hemos notado que aún no has designado tu dispositivo actual como el dispositivo activo de tu cuenta. Por favor, establece tu dispositivo activo para asegurar una experiencia fluida y segura en toda nuestra plataforma.",
 		"btnModal": "Ir a la nueva version de los consents",
-		"btnModalEnrollDevice": "Inscribir dispositivo",
 		"consentTreatment": "Consentimiento para el tratamiento",
 		"sanitasPatient": "Yo soy paciente de Sanitas. Al firmar este documento, doy mi consentimiento para ser tratado por doctores en esta práctica médica.",
 		"services": "Entiendo que el tratamiento y los servicios pueden incluir:",
@@ -201,7 +199,13 @@
 		"timeTo": "Ocasionalmente, Sanitas y sus afiliados desean comunicarse con los pacientes y otras personas a través de correos electrónicos, llamadas telefónicas, mensajes de texto, mensajes pregrabados o mensajes de voz para:",
 		"l1": "Al proporcionar mi número de teléfono y dirección de correo electrónico, autorizo voluntariamente y de manera expresa a Sanitas (o a terceros actuando en nombre de Sanitas y sujetos a restricciones de confidencialidad del paciente) a comunicarse conmigo a través al número de teléfono y dirección de correo electrónico que proporcioné anteriormente, utilizando llamadas telefónicas automatizadas/marcadas automáticamente, mensajes pregrabados, voces artificiales, correo de voz, mensajes SMS automatizados y correo electrónico para información relacionada con mi tratamiento y cuidado, así como para fines de marketing de productos y servicios de atención médica recomendados por Sanitas que pueden ser beneficiosos para los pacientes de Sanitas. Entiendo que dichas comunicaciones pueden no estar encriptadas o ser seguras. Sanitas utilizará medidas de seguridad apropiadas para proteger mi PHI de acuerdo con HIPAA y las leyes pertinentes. Se pueden aplicar tarifas por mensajes y datos.",
 		"such": "",
-		"ifYou": "Reconozco que tengo el derecho de optar por no recibir futuras comunicaciones de Sanitas en cualquier momento utilizando el mecanismo de opt-out proporcionado en la comunicación. Entiendo que puedo revocar este consentimiento para las comunicaciones en cualquier momento, ya sea completando un nuevo formulario de registro de paciente o notificando a Sanitas por escrito. También entiendo que no se me exige firmar este consentimiento como condición para recibir tratamiento o servicios de Sanitas, y que optar por no recibir las comunicaciones de Sanitas no afectará mi tratamiento ni los servicios disponibles para mí. Confirmo que soy el propietario o tengo control sobre el número de teléfono y correo electrónico aquí proporcionados y acepto notificar a Sanitas por escrito en un plazo de treinta (30) días si cambio mi número de teléfono o dirección de correo electrónico.",
+		"consentComunication1": "Reconozco que",
+		"consentComunication2": "utilizando el mecanismo de opt-out proporcionado en la comunicación. Entiendo que",
+		"consentComunication3": ", ya sea completando un nuevo formulario de registro de paciente o notificando a Sanitas por escrito. También entiendo que",
+		"consentComunication4": "Confirmo que soy el propietario o tengo control sobre el número de teléfono y correo electrónico aquí proporcionados y acepto notificar a Sanitas por escrito en un plazo de treinta (30) días si cambio mi número de teléfono o dirección de correo electrónico.",
+		"consentComunicationBol1": " tengo el derecho de optar por no recibir futuras comunicaciones de Sanitas en cualquier momento ",
+		"consentComunicationBol2": " puedo revocar este consentimiento para las comunicaciones en cualquier momento",
+		"consentComunicationBol3": " no se me exige firmar este consentimiento como condición para recibir tratamiento o servicios de Sanitas, y que optar por no recibir las comunicaciones de Sanitas no afectará mi tratamiento ni los servicios disponibles para mí. ",
 		"patientHipaa": "Conocimiento de cláusulas HIPAA",
 		"notice": "Notificación de práctica privada. Reconozco que he recibido aviso de las prácticas de privacidad, las cuales describen la forma en que debe ser utilizada y divulgada mi información de salud para tratamiento, pago, administración del cuidado de la salud y otros usos o divulgaciones permitidas y descritas. Entiendo que puedo comunicarme con la oficina si tengo una pregunta o queja. En la medida que la ley lo permita, autorizo el uso y divulgación de mi información para los propósitos descritos en la Notificación de prácticas de privacidad de la práctica médica.",
 		"release": "La divulgación de la información. Autorizo a Sanitas y a los médicos u otros profesionales de la salud involucrados en mi cuidado de salud a divulgar información sobre el cuidado de salud para propósitos pertinentes como tratamiento, pago o atención médica.",
@@ -241,7 +245,8 @@
 		"floridaOnlyText": "Mediante mi consentimiento y firma abajo, autorizo voluntariamente a Sanitas a recibir, usar y divulgar mi PHI electrónica a través de HIEs solo para Usos Permitidos.",
 		"iGiveMyConsent": " DOY MI CONSENTIMIENTO ",
 		"iDoNotGiveMyConsent": " NO DOY MI CONSENTIMIENTO ",
-		"myConsentTextend": "para que Sanitas utilice un HIE para acceder a mi PHI (OPT-OUT).",
+		"myConsentTextend": "para que Sanitas utilice un HIE para acceder a mi PHI (OPT-IN).",
+		"notMyConsentTextend": "para que Sanitas utilice un HIE para acceder a mi PHI (OPT-OUT).",
 		"myConsent": "Mediante la firma de este documento, declaro que he leído y entiendo la información aquí consignada",
 		"noticeOfPrivacy1": "Aviso de Prácticas de Privacidad. Reconozco que he recibido el Aviso de Prácticas de Privacidad de Sanitas (",
 		"noticeOfPrivacyLink1": "https://www mysanitas.com/en/legal/notice-privacy-practices",
@@ -261,6 +266,7 @@
 		"titleFriendTwo": "Familiar/ Amigo 2",
 		"date": "Fecha de registro*",
 		"type": "Escribe tu nombre para firmar*",
+		"placeholderSign": "Escribe tu nombre*",
 		"create": "Crear cuenta",
 		"back": "Volver",
 		"requiredFields": "Todos los campos con * son obligatorios"
@@ -271,6 +277,10 @@
 		"sso": {
 			"titleError": "Ha ocurrido un error.",
 			"messageError": "Por favor ingresa con tus credenciales de MySanitas o crea una cuenta nueva.",
+			"btnError": "Aceptar"
+		},
+		"ssoEmail": {			
+			"messageError": "Lo sentimos, pero la dirección de correo electrónico que has introducido ya está asociada a una cuenta existente. Utiliza otra dirección de correo electrónico para continuar.",
 			"btnError": "Aceptar"
 		},
 		"label": {
@@ -399,17 +409,13 @@
 			"dateBirth": "Fecha de nacimiento*"
 		},
 		"patientRelationship": {
-			"self": "Uno mismo",
+			
 			"patientSelf": "Paciente",
-			"spouse": "Esposo(a)",
+			
 			"naturalChild": "Hijo(a) Natural-Garante/Asegurado responde económicamente",
 			"naturalChild2": "Hijo(a) Natural-Garante/Asegurado no responde económicamente",
 			"stepChild": "Hijastro(a)",
-			"fosterChild": "Hijo(a) adoptivo",
-			"ward": "Responsable por orden judicial",
-			"employee": "Empleado",
-			"unknown": "Desconocido - Relación no listada",
-			"handicapped": "Dependiente discapacitado",
+			"fosterChild": "Hijo(a) adoptivo",			
 			"organ": "Donante de órganos",
 			"cadaver": "Donante de cadáver",
 			"granchild": "Nieto(a)",
@@ -417,9 +423,37 @@
 			"injured": "Demandante lesionado",
 			"sponsored": "Dependiente patrocinado",
 			"minor": "Dependiente menor",
-			"parent": "Padre/Madre",
-			"grandparent": "Abuelo(a)",
-			"other": "Otro"
+			"associate": "Asociado",
+			"brother": "Hermano",
+			"care": "Cuidador",
+			"child": "Niño/a",
+			"handicapped": "Discapacitado dependiente",
+			"life": "Compañero de vida",
+			"emergency": "Contacto de emergencia",
+			"employee": "Empleado",
+			"employer": "Empleador",
+			"extended": "Familia extendida",
+			"foster": "Niño/a adoptivo",
+			"friend": "Amigo/a",
+			"father": "Padre",
+			"grandchild": "Nieto",
+			"guardian": "Tutor",
+			"grandparent": "Abuelo/a",
+			"mother": "Mamá",
+			"natural": "Niño/a natural",
+			"none": "Ninguna",
+			"other2": "Otro adulto",
+			"other": "Otro",
+			"owner": "Dueño",
+			"parent": "Pariente",
+			"stepchild": "Hijastro/a",
+			"self": "Si mismo",
+			"sibling": "Hermano",
+			"sister": "Hermana",
+			"spouse": "Esposa",
+			"trainer": "Entrenador",
+			"unknown": "Desconocido",
+			"ward": "Tutela de tribunal"
 		},
 		"progressBtnTitles": {
 			"medicalServices": "Estado del paciente",
@@ -500,8 +534,8 @@
 		"female": "Femenino",
 		"male": "Masculino",
 		"intersexual": "Intersexual",
-		"transgenderMaleToFemale": "Transgénero: Hombre a Mujer",
-		"transgenderFemaleToMale": "Transgénero: Mujer a Hombre",
+		"transgenderMaleToFemale": "Hombre a Mujer",
+		"transgenderFemaleToMale": "Mujer a Hombre",
 		"neitherExclusiveFemaleOrMale": "No exclusivamente ni hombre ni mujer",
 		"chooseNotToDisclose": "Prefiero/e no revelarlo",
 		"otherPleaseSpecify": "Otro"
@@ -511,8 +545,8 @@
 		"homosexualGayLesbian": "Homosexual (Gay/Lesbiana)",
 		"bisexual": "Bisexual",
 		"other": "Otro",
-		"doNotKnow": "No sé/sabe",
-		"declined": "Prefiero/e no revelarlo"
+		"doNotKnow": "No Sabe",
+		"declined": "Prefiero no revelarlo"
 	},
 	"ethnicity": {
 		"hispanicLatino": "Hispano o Latino",
@@ -523,9 +557,9 @@
 	"race": {
 		"white": "Blanco/a ",
 		"blackAfricanAmerican": "Afro Americano/a",
-		"nativeHawaiianPacificIslander": "Nativo/a de la Polinesia",
+		"nativeHawaiianPacificIslander": "Nativo Hawaiano/Isleño del Pacífico",
 		"asian": "Asiático/a",
-		"american": "Americano/a",
+		"american": "Indio/a Amaericano/a",
 		"indian": "Indio/a",
 		"other": "Otro",
 		"declined": "Prefiero/e no revelarlo"
@@ -540,7 +574,7 @@
 		"married": "Casado/a",
 		"divorced": "Divorciado/a",
 		"widowed": "Viudo/a",
-		"declined": "Pareja de hecho"
+		"declined": "Pareja"
 	},
 	"employmentStatus": {
 		"fullTimeEmployee": "Empleado de tiempo completo",
@@ -1443,7 +1477,7 @@
 		"manage": "Gestione su información personal. ",
 		"personalDetails": "Información personal",
 		"emergency": "Contacto de emergencia",
-		"first": "Primer nombre",
+		"first": "Nombre",
 		"last": "Apellido",
 		"gender": "Género al nacer",
 		"genderIdentity": "Identidad de género",
@@ -1466,7 +1500,7 @@
 		"delete": "Eliminar cuenta",
 		"buttonDisAgree": "Disagree",
 		"email": "Correo electrónico",
-		"mobileHome": "Teléfono casa",
+		"mobileHome": "Teléfono",
 		"homePhone": "Teléfono fijo",
 		"edit": "Editar cuenta",
 		"title": "Actualiza tu información personal",
@@ -1756,6 +1790,10 @@
 		"sms": "SMS",
 		"email": "Correo electronico",
 		"loginDate": "Fecha de inicio de sesión: ",
+		"enrollDeviceModal": "Hemos notado que aún no has designado tu dispositivo actual como el dispositivo activo de tu cuenta. Por favor, establece tu dispositivo activo para asegurar una experiencia fluida y segura en toda nuestra plataforma.",
+		"close": "Cancelar",
+		"btnModalEnrollDevice": "Inscribir dispositivo",
+		"deleteModalEnrollDevice": "¿Deseas suspender el envío de notificaciones\n para este dispositivo?",
 
 		"change_password": "Cambio de contraseña",
 		"block_account": "Cuenta bloqueada",

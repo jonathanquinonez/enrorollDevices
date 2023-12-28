@@ -51,10 +51,11 @@ const initialState: UserState = {
 		platform: 'app',
 		status: false,
 	},
-	vitalResults: { date: '', data: '' },
 	tokenFB: undefined,
 	tempUserSSO: undefined,
 	stateViewChat: { queue: '', stateView: false },
+	vitalResults: '',
+	tempEmailSSOEdited: false,
 	notificationsList: [],
 	tempDeleteNotification: undefined,
 };
@@ -86,7 +87,6 @@ export const UserSlice = createSlice({
 		setLocation: (state, { payload }) => ({ ...state, locationSelected: payload }),
 		setIsFilter: (state, { payload }) => ({ ...state, isFilter: payload }),
 		setIsBeWell: (state, { payload }) => ({ ...state, isBeWell: payload }),
-		setTempDeleteNotification: (state, { payload }) => ({ ...state, tempDeleteNotification: payload }),
 		setCurrentRoute: (state, { payload }) => ({ ...state, currentRoute: payload }),
 		setStatusMaintenance: (state, { payload }) => ({ ...state, statusMaintenance: payload }),
 		setMaintenanceData: (state, { payload }) => ({ ...state, maintenanceData: payload }),
@@ -102,6 +102,10 @@ export const UserSlice = createSlice({
 		setPreviousRoute: (state, { payload }) => ({ ...state, previousRoute: payload }),
 		setPaymentResponse: (state, { payload }) => ({ ...state, paymentResponse: payload }),
 		setIsPaymentProcess: (state, { payload }) => ({ ...state, isPaymentProcess: payload }),
+		setTempDeleteNotification: (state, { payload }) => ({
+			...state,
+			tempDeleteNotification: payload,
+		}),
 		setIsTelevisitNavigate: (state, { payload }) => ({
 			...state,
 			isTelevisitNavigate: payload,
@@ -116,6 +120,7 @@ export const UserSlice = createSlice({
 		setSSOToken: (state, { payload }) => ({ ...state, token: payload }),
 		setTokenFB: (state, { payload }) => ({ ...state, tokenFB: payload }),
 		setTempUserSSO: (state, { payload }) => ({ ...state, tempUserSSO: payload }),
+		setTempEmailSSOEdited: (state, { payload }) => ({ ...state, tempEmailSSOEdited: payload }),
 	},
 	extraReducers: (builder) => {
 		builder
@@ -127,8 +132,8 @@ export const UserSlice = createSlice({
 					token == '-1'
 						? (state.token = token)
 						: ((state.activeCoverage =
-							(jwtDecode(token) as any)?.activeCoverage || false),
-							(state.token = token));
+								(jwtDecode(token) as any)?.activeCoverage || false),
+						  (state.token = token));
 				},
 			)
 			.addMatcher(registerApi.endpoints.finalSave.matchFulfilled, (state, { payload }) => {
@@ -154,11 +159,9 @@ export const UserSlice = createSlice({
 					...payload,
 				}),
 			)
-			.addMatcher(
-				usersApi.endpoints.notificationApp.matchFulfilled,
-				(state, { payload }) => {
-					state.notificationsList = payload ?? []
-				})
+			.addMatcher(usersApi.endpoints.notificationApp.matchFulfilled, (state, { payload }) => {
+				state.notificationsList = payload ?? [];
+			})
 			.addMatcher(authApi.endpoints.loadUserBySession.matchRejected, (state) => ({
 				...initialState,
 				locationSelected: state.locationSelected,

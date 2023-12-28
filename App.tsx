@@ -11,16 +11,12 @@ import 'react-native-gesture-handler';
 import 'i18n/i18n';
 import { useState } from 'react';
 import Splash from 'src/components/atoms/Splash/Splash';
-import usePushNotifications from 'hooks/push/usePushNotifications';
-import useHandleNotifications from 'hooks/push/useHandleNotifications';
 
 export default function App() {
 	const isLoadingComplete = useCachedResources();
 	const [timer, setTimer] = useState(true);
 	const colorScheme = useColorScheme();
 	const [showOnboardingScreen, setShowOnboardingScreen] = useState(false);
-	const {} = usePushNotifications();
-	const {} = useHandleNotifications(null);
 
 	if (!isLoadingComplete) {
 		return null;

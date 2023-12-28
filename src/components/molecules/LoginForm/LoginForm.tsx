@@ -54,7 +54,6 @@ import GeneralServiceAuth from 'adapter/api/generalServiceAuth';
 import { userActions } from 'adapter/user/userSlice';
 import { loaderActions } from 'adapter/loader/loaderSlice';
 import FaceIcon from 'icons/faceIcon.svg';
-import { ChatKeralty, Keraltyhandles } from '@quillbot/keralty-chat-mobile';
 
 const LoginForm = (props: Props) => {
 	const { onSubmit, boobleState, autoFocus } = props;
@@ -108,7 +107,6 @@ const LoginForm = (props: Props) => {
 
 	const handleLoginBiometrical = useCallback(
 		(values: LoginCredentials) => {
-			console.log('LOGIN WITH BIOMETRICAL');
 			if (values.email && values.password && getValues('email')) {
 				if (JSON.stringify(values) !== JSON.stringify(userBiometrical)) {
 					onAuthenticate(values, 'biometricalUpdate');
@@ -127,7 +125,6 @@ const LoginForm = (props: Props) => {
 	);
 
 	const handleLogin = async (values: LoginCredentials) => {
-		console.log('LOGIN WITHOUT BIOMETRICAL');
 		if (values.email && values.password) {
 			await AsyncStorage.save(ASYNC_STORAGE.BIOMETRICALOPTION, 'false');
 			onSubmit({
@@ -377,7 +374,7 @@ const LoginForm = (props: Props) => {
 		if (previousRoute == 'Home') openwarning();
 		reset();
 	}, [previousRoute, currentRoute]);
-	const ref = React.useRef<Keraltyhandles>(null);
+
 	const extraScrollHeight = extraScrollHeigth();
 	return (
 		<View style={styles.container}>
@@ -405,6 +402,7 @@ const LoginForm = (props: Props) => {
 						autoCapitalize="none"
 						inputStyle={{ width: windowDimentions.width * 0.82 }}
 						maxFontSizeMultiplier={1.3}
+						autoCorrect={false}
 					/>
 					<Input
 						accesibilityLabel={t('accessibility.seePassword')}
@@ -472,6 +470,7 @@ const LoginForm = (props: Props) => {
 								: handleSubmit(handleLogin)
 						}
 					/>
+
 					<Button
 						accesibilityLabel={t('accessibility.create_account')}
 						onPress={

@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Linking, View } from 'react-native';
+import { Linking, View, Text } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import Row from '../../components/atoms/Row/Row';
 import Button from 'src/components/atoms/Button/Button';
@@ -39,6 +39,7 @@ import { useErrorAlert } from 'src/components/atoms/ErrorAlertProvider/ErrorAler
 import { userActions } from 'adapter/user/userSlice';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import useConsents, { getLabelByValue } from 'hooks/useConsents';
+import { getMaritalStatusLabel } from '../Notifications/UtilNotifications';
 
 export const PersonalInformationList = () => {
 	const {
@@ -60,7 +61,7 @@ export const PersonalInformationList = () => {
 	const [isLoading, setIsLoading] = useState(false);
 	const { currentRoute } = useAppSelector(userSelectors.selectRoute);
 	const { data: emergencyData, isSuccess: succesEmergency } =
-		UsersService.useGetEmergencyContactDataQuery({id: authUid, state: locationSelected });
+		UsersService.useGetEmergencyContactDataQuery({ id: authUid, state: locationSelected });
 	const dispatch = useAppDispatch();
 
 	const [listCurrentMarital, setListCurrentStatus] = useState([]);
@@ -75,10 +76,6 @@ export const PersonalInformationList = () => {
 	];
 	const [getMaritalStatus] = EcwService.useMaritalStatusMutation();
 	const [getPersonalInfo] = UsersService.useGetPersonalInfoMutation();
-
-	useEffect(() => {
-		console.log('Emergency Data updated', emergencyData);
-	}, [emergencyData]);
 
 	const getMaritalStatusList = useCallback(async () => {
 		try {
@@ -126,6 +123,17 @@ export const PersonalInformationList = () => {
 	let EmergencyInformation: InfLabels[] = [];
 	let showEmergency = false;
 
+	// Lista de Marital Status
+	const items = [
+		{ key: 1, label: t('maritalStatus.single'), value: "1" },
+		{ key: 2, label: t('maritalStatus.married'), value: "2" },
+		{ key: 3, label: t('maritalStatus.divorced'), value: "3" },
+		{ key: 4, label: t('maritalStatus.widowed'), value: "4" },
+		{ key: 5, label: t('maritalStatus.declined'), value: "5" },
+	];
+
+	const maritalStatusLabel = getMaritalStatusLabel(personalData?.maritalStatus, items);
+
 	if (personalData) {
 		PersonalInformation = [
 			{
@@ -146,8 +154,8 @@ export const PersonalInformationList = () => {
 				subTitle:
 					personalData?.birthdate || personalData?.dateOfBirth
 						? moment(personalData?.birthdate ?? personalData?.dateOfBirth).format(
-								FORMATS.date,
-						  )
+							FORMATS.date,
+						)
 						: '',
 				doubleLine: false,
 			},
@@ -156,7 +164,7 @@ export const PersonalInformationList = () => {
 				title: `${t('personalInformation.gender')}`,
 				subTitle: personalData?.sex
 					? listGender.find((v) => v.value === personalData?.sex.toUpperCase().charAt(0))
-							?.label
+						?.label
 					: '',
 				doubleLine: false,
 			},
@@ -176,9 +184,9 @@ export const PersonalInformationList = () => {
 					(personalData?.sexualOrientation?.description
 						? personalData?.sexualOrientation?.description
 						: getLabelByValue(
-								sexualOrientationOptions,
-								personalData?.sexualOrientation?.id,
-						  )) ?? '',
+							sexualOrientationOptions,
+							personalData?.sexualOrientation?.id,
+						)) ?? '',
 				doubleLine: false,
 			},
 			{
@@ -207,15 +215,15 @@ export const PersonalInformationList = () => {
 					(personalData?.preferedLanguage?.description
 						? personalData?.preferedLanguage?.description
 						: getLabelByValue(
-								preferedLanguageOptions,
-								personalData?.preferedLanguage?.id,
-						  )) ?? '',
+							preferedLanguageOptions,
+							personalData?.preferedLanguage?.id,
+						)) ?? '',
 				doubleLine: false,
 			},
 			{
 				iconLabel: <IconMarital style={{ marginLeft: 20, marginRight: 10 }} />,
 				title: `${t('personalInformation.marital')}`,
-				subTitle: maritalStatus,
+				subTitle: maritalStatusLabel.label,
 				doubleLine: false,
 			},
 			{
@@ -225,9 +233,9 @@ export const PersonalInformationList = () => {
 					(personalData?.employmentStatus?.description
 						? personalData?.employmentStatus?.description
 						: getLabelByValue(
-								employmentStatusOptions,
-								personalData?.employmentStatus?.id,
-						  )) ?? '',
+							employmentStatusOptions,
+							personalData?.employmentStatus?.id,
+						)) ?? '',
 				doubleLine: false,
 			},
 			{
@@ -274,6 +282,19 @@ export const PersonalInformationList = () => {
 				doubleLine: false,
 			},
 		];
+		if (personalData?.workPhone) PersonalInformation.splice(11, 0, {
+			iconLabel: <MobileAlt style={{ marginLeft: 20, marginRight: 10 }} />,
+			title: `${t('createAccount.inputs.workPhone')}`,
+			subTitle: personalData?.workPhone ?? '',
+			doubleLine: false,
+		});
+		if (personalData?.employerName) PersonalInformation.splice(11, 0, {
+			iconLabel: <IconUser style={{ marginLeft: 20, marginRight: 10 }} />,
+			title: `${t('createAccount.inputs.employerName')}`,
+			subTitle: personalData?.employerName ?? '',
+			doubleLine: false,
+		});
+
 	}
 
 	if (succesEmergency) {
@@ -293,7 +314,7 @@ export const PersonalInformationList = () => {
 			{
 				iconLabel: <IconPeopleArrows style={{ marginLeft: 20, marginRight: 10 }} />,
 				title: `${t('personalInformation.relation')}`,
-				subTitle: emergencyData?.relation ?? '',
+				subTitle: emergencyData?.relationShip?.value ?? '',
 				doubleLine: false,
 			},
 			{

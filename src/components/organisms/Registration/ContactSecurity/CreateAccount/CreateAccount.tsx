@@ -1,5 +1,5 @@
 import React from 'react';
-import { Dimensions, Text, View } from 'react-native';
+import { Dimensions, Text, View, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { MASK } from 'ui-core/utils/mask';
 
@@ -17,14 +17,30 @@ import RadioGroup from 'src/components/atoms/RadioGroup/RadioGroup';
 import RadioButton from 'src/components/atoms/RadioButton/RadioButton';
 import { windowDimentions } from 'ui-core/utils/globalStyles';
 
+import RNPickerSelect from 'react-native-picker-select';
+import ArrowDownIcon from 'icons/ArrowDownIcon.svg';
+import { patientRelationship } from 'domain/entities/tempFormUser';
+import InputSelect from 'src/components/atoms/InputSelect/InputSelect';
+import useConsents from 'hooks/useConsents';
+
 /**
  * Render a CreateAccount.
  * @since 1.0.0
  */
 const CreateAccount: React.FC<Props> = (props) => {
-	const { control, errors, elegibilityData, setValue } = props;
+	const { control, errors, elegibilityData, setValue, getValues, watch } = props;
 	const { styles, colors } = useStyles(componentStyles);
 	const { t } = useTranslation();
+
+	const {
+		gendersOptions,
+		sexualOrientationOptions,
+		ethnicityOptions,
+		raceOptions,
+		preferedLanguageOptions,
+		employmentStatusOptions,
+		emergencyContactOptions,
+	} = useConsents();
 
 	return (
 		<>
@@ -161,18 +177,61 @@ const CreateAccount: React.FC<Props> = (props) => {
 				mask={MASK.phone}
 				autoCorrect={false}
 			/>
-			<Input
+			{/*  */}
+
+			<InputSelect
 				icon={<User />}
-				labelStyle={{ color: colors.BLUEDC1 }}
-				inputStyle={{ width: Dimensions.get('window').width * 0.9 }}
-				placeholder={t('patientRegistration.placeholders.emergencyRelationship')}
-				label={t('createAccount.inputs.emergencyRelationship')}
-				name={'emergencyRelationship'}
 				control={control}
+				style={{ width: Dimensions.get('window').width * 0.9 }}
+				label={t('createAccount.inputs.emergencyRelationship')}
+				items={emergencyContactOptions}
+				placeholder={t('patientRegistration.placeholders.emergencyRelationship')}
+				onChange={(v, index) => {
+					const selectedItem =
+						index == 0 ? { value: '', label: '' } : emergencyContactOptions[index - 1];
+					setValue('emergencyRelationship', selectedItem.value);
+				}}
+				name="emergencyRelationship"
 				error={errors.emergencyRelationship}
 			/>
-			<Text style={styles.text} maxFontSizeMultiplier={1.3}>{t('createAccount.inputs.emergencyContact')}</Text>
-			<RadioGroup style={styles.customRow}
+			{watch('emergencyRelationship') == 'O' && (
+				<Input
+					keyboardType="ascii-capable"
+					inputStyle={{
+						width: Dimensions.get('window').width * 0.9,
+						paddingLeft: 20,
+					}}
+					placeholder={t('createAccount.placeholders.other')}
+					name={'emergencyRelationshipOther'}
+					control={control}
+					error={errors.emergencyRelationshipOther}
+					value={getValues('emergencyRelationshipOther')}
+					onChange={(e) => {
+						setValue('emergencyRelationshipOther', e.nativeEvent.text);
+					}}
+				/>
+			)}
+			{errors.emergencyRelationship && !getValues('emergencyRelationship') && (
+				<View style={[{ marginBottom: 10, width: windowDimentions.width * 0.9 }]}>
+					<Text
+						style={{
+							color: colors.DANGER,
+							fontFamily: 'proxima-regular',
+							fontSize: 12,
+						}}
+						adjustsFontSizeToFit
+						maxFontSizeMultiplier={1.3}
+					>
+						{t(`errors.required`)}
+					</Text>
+				</View>
+			)}
+
+			<Text style={styles.text} maxFontSizeMultiplier={1.3}>
+				{t('createAccount.inputs.emergencyContact')}
+			</Text>
+			<RadioGroup
+				style={styles.customRow}
 				onChange={(v) => {
 					if (v == 1) {
 						setValue('emergencyContact', true);
@@ -182,28 +241,60 @@ const CreateAccount: React.FC<Props> = (props) => {
 				}}
 			>
 				<RadioButton
-					accessibilityRole='radio'
+					accessibilityRole="radio"
 					value={1}
 					style={{
 						paddingRight: 20,
 					}}
 					textStyle={styles.item}
-					title={t('patientRegistration.placeholders.emergencyYes')} />
+					title={t('patientRegistration.placeholders.emergencyYes')}
+				/>
 				<RadioButton
-					accessibilityRole='radio'
+					accessibilityRole="radio"
 					value={2}
 					style={{
 						paddingRight: 20,
-						paddingLeft: 20
+						paddingLeft: 20,
 					}}
 					textStyle={styles.item}
-					title={t('patientRegistration.placeholders.emergencyNo')} />
+					title={t('patientRegistration.placeholders.emergencyNo')}
+				/>
 			</RadioGroup>
-			{errors.emergencyContact && <View style={{ marginBottom: 20, marginTop: -10, width: windowDimentions.width * .90 }}>
-				<Text style={{ color: colors.DANGER, fontFamily: 'proxima-regular', fontSize: 12 }} adjustsFontSizeToFit maxFontSizeMultiplier={1.3}>{t(`errors.required`)}</Text>
-			</View>}
+			{errors.emergencyContact && (
+				<View
+					style={{
+						marginBottom: 20,
+						marginTop: -10,
+						width: windowDimentions.width * 0.9,
+					}}
+				>
+					<Text
+						style={{
+							color: colors.DANGER,
+							fontFamily: 'proxima-regular',
+							fontSize: 12,
+						}}
+						adjustsFontSizeToFit
+						maxFontSizeMultiplier={1.3}
+					>
+						{t(`errors.required`)}
+					</Text>
+				</View>
+			)}
 		</>
 	);
 };
 
 export default CreateAccount;
+
+const pickerSelectStyles = StyleSheet.create({
+	inputIOS: {
+		paddingLeft: 20,
+	},
+	inputAndroid: {
+		fontSize: 14,
+		color: '#757575',
+		paddingRight: 40,
+		paddingLeft: 15,
+	},
+});

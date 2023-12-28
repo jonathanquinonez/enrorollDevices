@@ -123,7 +123,6 @@ const AccountVerification: React.FC<Props> = (props) => {
             try {
                 const res = await initialSaveByAccountNumber(values).unwrap();
                 dispatch(userActions.setStateRegister(data.userState))
-                console.log("los datos del userState", data.userState)
                 switch (res?.cause) {
                     case 'SUCCESS':
                         if (res.tempSessionId) {
@@ -179,11 +178,9 @@ const AccountVerification: React.FC<Props> = (props) => {
                         });
                         break;
                     default:
-                        console.log('ENTRO AL DEFAult')
                         break;
                 }
             } catch (error) {
-                console.log("PETICION: ", error);
                 setAlertErrorMessage(t(`errors.code${error == '30' ? '20' : error}`))
             }
         },

@@ -31,7 +31,7 @@ const IconAlert = (props: Props) => {
 
   return (
     <View>
-      {active ? <Bell /> : icons[numberNotifications] && icons[numberNotifications]}
+      {active ? <Bell /> : numberNotifications > 9 ? icons[10] : icons[numberNotifications]}
     </View>
   )
 }

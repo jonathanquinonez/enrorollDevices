@@ -123,10 +123,6 @@ export const UpdateMyInsurance = () => {
 		clearErrors('dateOfBirthH', '');
 	}, [watch('relationshipId')]);
 
-	useMemo(() => {
-		console.log('errors--', errors);
-	}, [errors]);
-
 	const onValidSubmit = useCallback(
 		async (values: IUpdateMyInsurance) => {
 			/* if (userInformation?.ecwId) { */

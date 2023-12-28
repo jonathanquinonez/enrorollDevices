@@ -38,6 +38,9 @@ export const consentsApi: any = createApi({
 		fetchDoYouHave: build.mutation<string, any>({
 			query: (language: string) => ConsentsConfig.getDoYouHave(language),
 		}),
+		emergencyContact: build.mutation<string, any>({
+			query: (language: string) => ConsentsConfig.getEmergencyContact(language),
+		}),
 	})
 });
 const consentsService = consentsApi;

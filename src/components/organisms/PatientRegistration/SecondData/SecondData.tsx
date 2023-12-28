@@ -74,6 +74,7 @@ const SecondData: React.FC<SecondDataProps> = (props) => {
 		formState: { errors },
 		clearErrors,
 		reset: resetear,
+		setError,
 	} = useForm<PatientInsuranceInfo>({
 		resolver: yupResolver(InsuranceInfoSchema),
 		mode: 'onChange',
@@ -303,6 +304,7 @@ const SecondData: React.FC<SecondDataProps> = (props) => {
 					name="insuranceCompanyTemp"
 					error={errors.insuranceCompanyTemp}
 				/>
+				
 				<Input
 					control={control._defaultValues.name_of_insured}
 					editable={editable}
@@ -314,12 +316,24 @@ const SecondData: React.FC<SecondDataProps> = (props) => {
 					]}
 					placeholder={t('patientRegistration.name')}
 					label={`${t('patientRegistration.name')}*`}
-					onChangeText={(v) => {
-						console.log(v);
+					onChangeText={(v) => {						
 						setValue('name_of_insured', v);
-						if (v.length > 0) {
+						if (v.length < 2) {
+							setError('name_of_insured', {
+								type: 'manual',
+								message: 'min',
+							});
+						}else
+						if (v.length >= 2 && v.length <= 50) {
 							clearErrors('name_of_insured');
-						}
+						} else
+						if (v.length > 50) {
+						setError('name_of_insured', {
+							type: 'manual',
+							message: 'max',
+						});
+					}
+						
 					}}
 					// control={!secundary ? control1 : control2}
 					error={errors.name_of_insured}
@@ -338,9 +352,21 @@ const SecondData: React.FC<SecondDataProps> = (props) => {
 					label={`${t('patientRegistration.lastnamein')}*`}
 					onChangeText={(v) => {
 						setValue('lastname_of_insured', v);
-						if (v.length > 0) {
+						if (v.length < 2) {
+							setError('lastname_of_insured', {
+								type: 'manual',
+								message: 'min',
+							});
+						}else
+						if (v.length >= 2 && v.length <= 50) {
 							clearErrors('lastname_of_insured');
-						}
+						}else
+						if (v.length > 50) {
+						setError('lastname_of_insured', {
+							type: 'manual',
+							message: 'max',
+						});
+					}
 					}}
 					// control={!secundary ? control1 : control2}
 					error={errors.lastname_of_insured}

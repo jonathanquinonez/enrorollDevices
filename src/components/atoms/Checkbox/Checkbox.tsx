@@ -34,7 +34,6 @@ const Checkbox = (props: Props) => {
   const { t } = useTranslation();
 
   const handleOnPress = (toogle: boolean) => {
-    console.log('Presss')
     toggleCheck(toogle);
     if (onPress) onPress(toogle);
 

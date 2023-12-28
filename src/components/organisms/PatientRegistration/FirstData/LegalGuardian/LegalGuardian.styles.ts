@@ -10,7 +10,7 @@ const styles = (colors: KeraltyColors) =>
       alignItems: 'center'
     },
     input: {
-      width: Dimensions.get('window').width * 0.85,
+      width: Dimensions.get('window').width * 0.90,
       marginBottom: 15
     },
     item: {

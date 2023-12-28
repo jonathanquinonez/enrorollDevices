@@ -9,7 +9,6 @@ import SafeScreen from 'src/components/organisms/SafeScreen/SafeScreen';
  * @since 1.0.0
  */
 const CreateAccountSSO = () => {
-
 	return (
 		<SafeScreen>
 			<CreateSsoAccount />

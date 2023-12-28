@@ -31,6 +31,8 @@ export interface EditAccountProps {
 	languagePreferenceLabel?: string;
 	employmentStatusLabel?: string;
 	state: string;
+	employerName: string | null | undefined;
+	workPhone: string;
 }
 
 export const listGender = () => {
@@ -51,6 +53,29 @@ export const EditAccountInf: Yup.SchemaOf<EditAccountProps> = Yup.object().shape
 	languagePreferenceLabel: Yup.string(),
 	employmentStatusLabel: Yup.string(),
 	employmentStatus: Yup.string().required('required'),
+	employerName: Yup.string().max(60, 'max').matches(REGEX.lettersChars, 'invalidName').nullable(),
+	workPhone: Yup.string()
+    .notRequired()
+    .nullable()
+    .test('is-valid-phone', 'invalidPhone', function(value) {
+		// Esta función se ejecuta solo si workPhone tiene algún valor
+		if (value && value.trim().length > 0) {
+		  return REGEX.phone.test(value);
+		}
+		return true; // Si workPhone está vacío, se considera válido
+	  }),
+
+	// workPhone: Yup.string().notRequired().nullable().matches(REGEX.phone, 'invalidPhone'),
+	// employerName: Yup.string().when('employmentStatus', {
+	// 	is: (employmentStatus: string) => employmentStatus === '1' || employmentStatus === '2',
+	// 	then: Yup.string().required('required').matches(REGEX.lettersChars, 'invalidName').max(60, 'max'),
+	// 	otherwise: Yup.string().notRequired(),
+	//   }),
+	//   workPhone: Yup.string().when('employmentStatus', {
+	// 	is: (employmentStatus: string) => employmentStatus === '1' || employmentStatus === '2',
+	// 	then: Yup.string().required('required').matches(REGEX.phone, 'invalidPhone'),
+	// 	otherwise: Yup.string().notRequired(),
+	//   }),
 	languagePreference: Yup.string().required('required'),
 	languagePreferenceOther: Yup.string().when('languagePreference', {
 		is: (languagePreference: string) => languagePreference && languagePreference.trim() === 'O',
@@ -71,7 +96,7 @@ export const EditAccountInf: Yup.SchemaOf<EditAccountProps> = Yup.object().shape
 		.max(12, 'max')
 		.min(5, 'min')
 		.matches(REGEX.zipcode, 'invalidFormatGeneric').required('required'),
-	city: Yup.string().max(50, 'max').required('required'),
+	city: Yup.string().min(2, 'min').max(50, 'max').required('required'),
 	state: Yup.string().required('required'),
 	genderIdentity: Yup.string().required('required'),
 	genderIdentityOther: Yup.string().when('genderIdentity', {

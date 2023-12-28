@@ -38,6 +38,7 @@ export const ResponsibleInfoSchema: Yup.SchemaOf<SchemaType> = Yup.object().shap
 		.typeError('invalidBirthdate'),
 	city: Yup.string()
 		.required('required')
+		.min(2, 'min')
 		.max(50, 'max')
 		.matches(REGEX.lettersNumberSpace, 'invalidName'),
 	state: Yup.string()

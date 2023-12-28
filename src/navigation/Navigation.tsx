@@ -237,7 +237,6 @@ const RootNavigator = (props: any) => {
 	useEffect(() => {
 		const handleAppStateChange = (nextAppState: any) => {
 			if (appState.match(/inactive|background/) && nextAppState === 'active') {
-				console.log('La aplicación volvió al modo activo desde segundo plano');
 				isInBackgroundRef.current = false; // Actualiza la variable de ref
 				dispatch(userActions.setServerDate(undefined));
 				dispatch(userActions.setHourDifference(undefined));

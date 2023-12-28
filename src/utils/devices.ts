@@ -59,9 +59,6 @@ export const getCurrentValidatedTime = (data: { date: string; time: string }): D
 		return undefined;
 	}
 };
-// console.log('---------------------------------------------------------')
-// console.log('--currentDate--', moment(dateBackend).format(), currentDate)
-// console.log('--startDate--', moment(date_init).format(), startDate)
 
 export const TIMES_ZONES = {
 	ET: {
@@ -86,10 +83,6 @@ export const checkMaintenanceStatus = (
 	const currentDate = new Date(moment(dateBackend).format());
 	const startDate = new Date(moment(date_init).format());
 	const endDate = new Date(moment(date_end).format());
-
-	// console.log('---------------------------------------------------------')
-	// console.log('--currentDate--', moment(dateBackend).format(), currentDate)
-	// console.log('--startDate--', moment(date_init).format(), startDate)
 
 	if (currentDate >= startDate && currentDate <= endDate) {
 		return 'in_maintenance';

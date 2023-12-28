@@ -97,12 +97,10 @@ const PaymentScreen = (props: Props) => {
         );
 
         if (error) {
-          console.log('-response payment error', error)
           dispatch(userActions.setPaymentResponse({
             ...error, id, status: 'Declined'
           }))
         } else if (paymentIntent) {
-          console.log('-response payment ok', paymentIntent)
           dispatch(userActions.setPaymentResponse({ ...paymentIntent, id, payId: paymentIntent.id }))
         };
       }
@@ -130,7 +128,6 @@ const PaymentScreen = (props: Props) => {
         style={styles.containerInput}
         accessibilityViewIsModal
         onCardChange={(cardDetails) => {
-          // console.log('cardDetails', cardDetails);
           if (cardDetails.validCVC == 'Valid' &&
             cardDetails.validExpiryDate == 'Valid' &&
             cardDetails.validNumber == 'Valid') setIsValid(true)
@@ -142,7 +139,6 @@ const PaymentScreen = (props: Props) => {
         }}
         onFocus={(focusedField) => {
           if (focusedField) setFocusedField(focusedField)
-          // console.log('focusField', focusedField);
         }}
       />
       <Input

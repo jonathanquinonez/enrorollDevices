@@ -56,7 +56,6 @@ export const VimView = () => {
 		} catch (error) {
 			setTokenize('NA');
 			setConfig(getConfigValues({ lang, memberToken: '', userData }));
-			console.log('error errrrr -->', error);
 		}
 	};
 

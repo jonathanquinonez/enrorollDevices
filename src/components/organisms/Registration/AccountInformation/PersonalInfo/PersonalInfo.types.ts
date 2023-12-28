@@ -37,7 +37,7 @@ export interface PersonalInfoProps {
     workPhone: string,
 	}>;
 	elegibilityData?: any | undefined;
-}
+	}
 
 type GenderMapping = {
   [key: string]: string;

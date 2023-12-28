@@ -88,7 +88,7 @@ export const LanguageOptions = () => {
       await AsyncStorage.setItem(ASYNC_STORAGE.LANGUAGE, lang);
       setModal(onPressmodal)
     } catch (error) {
-      console.log('hola error: $(error)');
+
     }
   }
   const onChange = () => {

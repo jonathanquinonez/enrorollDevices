@@ -58,7 +58,6 @@ export const FormFHS: React.FC<{}> = (props) => {
 		},
 	})
 
-	useEffect(() => { console.log('-----errors---', errors) }, [errors])
 	useEffect(() => {
 		getValues('date') && getValues('time') && getValues('comments') ?
 			setDisabled(false)

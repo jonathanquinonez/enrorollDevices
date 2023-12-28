@@ -78,7 +78,6 @@ const AsideDrawer: React.FC<DrawerContentComponentProps & Props> = (props) => {
 
 	const onFinish = useCallback(async () => {
 		try {
-			console.log('--->>>>>');
 			await updateOnboardingByEmail({
 				email: userInfo.email,
 				state: userInfo.state,
@@ -196,7 +195,6 @@ const AsideDrawer: React.FC<DrawerContentComponentProps & Props> = (props) => {
 				handleShowModal(true);
 			}
 		} catch (error) {
-			console.log('el error', error);
 			setAlertErrorMessage(t(`errors.code${error}`));
 		}
 	}, [validateInsurance, authUid, locationSelected, token]);

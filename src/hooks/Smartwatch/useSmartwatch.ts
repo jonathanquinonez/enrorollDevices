@@ -26,7 +26,7 @@ const useSmartwatch = () => {
 			// eslint-disable-next-line @typescript-eslint/ban-types
 			AppleHealthKit.isAvailable((error: Object, result: boolean) => {
 				if (error) {
-					console.log('Apple health kit is not available');
+
 				} else if (result) {
 					requestIosPermissions();
 				}
@@ -61,7 +61,6 @@ const useSmartwatch = () => {
 	};
 
 	const requestAndroidPermissions = () => {
-		console.log('Requesting permisos android');
 		GoogleFit.authorize({
 			scopes: [
 				Scopes.FITNESS_ACTIVITY_READ,
@@ -71,11 +70,10 @@ const useSmartwatch = () => {
 			],
 		})
 			.then((res) => {
-				console.log('Authorized?', res);
 				retrieveData();
 			})
 			.catch((error) => {
-				console.log('Authorization failed', error);
+
 			});
 	};
 
@@ -83,10 +81,8 @@ const useSmartwatch = () => {
 		try {
 			setIsLoading(true);
 			if (Platform.OS === 'android') {
-				console.log('Getting google fit vlues');
 				GoogleFitValues();
 			} else {
-				console.log('Getting health kit values');
 				HealthKitValues();
 			}
 		} catch (error) {

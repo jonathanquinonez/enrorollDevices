@@ -53,18 +53,58 @@ const ecwMapper = {
 		return values;
 	},
 	mapFromUpcomingApointments: (dto: any): Array<UpcomingResult> => {
-		const values = dto.map(({ date, ...remain }: UpcomingResult) => ({
+		/*const values = dto.map(({ date, ...remain }: UpcomingResult) => ({
 			date: moment(date, 'YYYY-MM-DD').format(formats.date),
 			...remain,
-		}));
+		}));*/
+
+		const values = dto.map(({ date, ...remain }: UpcomingResult) => {
+			const formattedDate = moment(date, 'YYYY-MM-DD').format(formats.date);
+			
+			// Obtén un objeto Moment a partir de la cadena original
+			const dateMoment = moment(remain.startTime, 'HH:mm');
+			// Resta 5 horas al objeto Moment
+			const dateMomentResp = dateMoment.subtract(5, 'hours');
+			// Obtén la hora formateada en "HH:mm"
+			let newTime = dateMomentResp.format('HH:mm');
+			let timeBefore = remain.startTime;
+
+			remain.startTime = newTime;
+				
+			return {
+				date: formattedDate,
+				timeBefore,
+				...remain,
+			};
+		});
 		return values;
 	},
 
 	mapFromPreviusApointments: (dto: any): Array<PreviusResult> => {
-		const values = dto.map(({ date, ...remain }: PreviusResult) => ({
+		/*const values = dto.map(({ date, ...remain }: PreviusResult) => ({
 			date: moment(date, 'YYYY-MM-DD').format(formats.date),
 			...remain,
-		}));
+		}));*/
+
+		const values = dto.map(({ date, ...remain }: PreviusResult) => {
+			const formattedDate = moment(date, 'YYYY-MM-DD').format(formats.date);
+			
+			// Obtén un objeto Moment a partir de la cadena original
+			const dateMoment = moment(remain.startTime, 'HH:mm');
+			// Resta 5 horas al objeto Moment
+			const dateMomentResp = dateMoment.subtract(5, 'hours');
+			// Obtén la hora formateada en "HH:mm"
+			let newTime = dateMomentResp.format('HH:mm');
+			let timeBefore = remain.startTime;
+
+			remain.startTime = newTime;
+				
+			return {
+				date: formattedDate,
+				timeBefore,
+				...remain,
+			};
+		});
 		return values;
 	},
 };

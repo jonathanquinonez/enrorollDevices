@@ -34,6 +34,7 @@ const useConsents = () => {
   const [preferedLanguageOptions, setPreferedLanguageOptions] = useState<DropdownProps[]>(defaultOptions);
   const [employmentStatusOptions, setEmploymentStatusOptions] = useState<DropdownProps[]>(defaultOptions);
   const [doYouHaveOptions, setDoYouHaveOptions] = useState<DropdownProps[]>(defaultOptions);
+  const [emergencyContactOptions, setEmergencyContact] = useState<DropdownProps[]>(defaultOptions);
 
   const [fetchGenders] = ConsentsService.useFetchGendersMutation();
   const [fetchSexualOrientation] = ConsentsService.useFetchSexualOrientationMutation();
@@ -42,6 +43,7 @@ const useConsents = () => {
   const [fetchPreferedLanguage] = ConsentsService.useFetchPreferedLanguageMutation();
   const [fetchGuarantorEmployment] = ConsentsService.useFetchGuarantorEmploymentMutation();
   const [fetchDoYouHaveMutation] = ConsentsService.useFetchDoYouHaveMutation();
+  const [emergencyContact] = ConsentsService.useEmergencyContactMutation();
 
   const [showGenderIdentityOther, setShowGenderIdentityOther] = useState<boolean>(false);
   const [showSexualOrientationOther, setShowSexualOrientationOther] = useState<boolean>(false);
@@ -93,6 +95,7 @@ const useConsents = () => {
       fetchPreferedLanguage(language).unwrap(),
       fetchGuarantorEmployment(language).unwrap(),
       fetchDoYouHaveMutation(language).unwrap(),
+      emergencyContact(language).unwrap(),
     ])
       .then(values => {
         const [
@@ -102,7 +105,8 @@ const useConsents = () => {
           race,
           preferedLanguage,
           garantorEmployment,
-          doYouHave
+          doYouHave,
+          emergencyContactRes
         ] = values;
 
         setGendersOptions(format({ data: genders }));
@@ -112,9 +116,10 @@ const useConsents = () => {
         setPreferedLanguageOptions(format({ data: preferedLanguage }));
         setEmploymentStatusOptions(format({ data: garantorEmployment }));
         setDoYouHaveOptions(format({ data: doYouHave }));
+        setEmergencyContact(format({ data: emergencyContactRes }));
 
       }).catch(errors => {
-        console.log({ errors })
+
       }).finally(() => {
         setIsLoading(false);
       });
@@ -137,6 +142,7 @@ const useConsents = () => {
     showSexualOrientationOther,
     showPreferedLanguageOther,
     showMaritalStatusOther,
+    emergencyContactOptions,
     setStateOther
   }
 

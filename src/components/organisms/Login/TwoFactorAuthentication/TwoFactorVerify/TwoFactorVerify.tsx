@@ -131,8 +131,6 @@ const TwoFactorVerify: React.FC<Props> = (props) => {
                 }
 
                 openModalResend();
-                console.log("payload: ", payload);
-                console.log("resp: ", resp);
 
             } catch (err) {
                 
@@ -152,7 +150,6 @@ const TwoFactorVerify: React.FC<Props> = (props) => {
                     code: value,
                     state: locationSelected
                 }
-                console.log("payloadConfirm: ", payload);
 
                 const resp: any = await sendConfirmCode(payload);
                 if(resp?.error) {
@@ -175,8 +172,6 @@ const TwoFactorVerify: React.FC<Props> = (props) => {
                         state: locationSelected!,
                         isBiometric: valueLogin.type === 'biometrical' || valueLogin.type === 'biometricalUpdate' ? true : false
                     }
-
-                    console.log("payloadLogin: ", payloadLogin);
 
                     loginApp(payloadLogin);
                     
@@ -244,7 +239,7 @@ const TwoFactorVerify: React.FC<Props> = (props) => {
                     rootStyle={styles.codeFiledRoot}
                     keyboardType="numeric"
                     renderCell={({ index, symbol, isFocused }) => (
-                        <View style={[styles.cell, isFocused && styles.focusCell]} key={index}>
+                        <View style={[styles.cell, isFocused && styles.focusCell]} key={`code-${index}`}>
                             <Text
                                 maxFontSizeMultiplier={1.3}
                                 key={index}

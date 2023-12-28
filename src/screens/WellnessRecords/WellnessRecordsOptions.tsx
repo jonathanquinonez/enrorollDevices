@@ -33,7 +33,6 @@ export const WellnessRecordsOptions = () => {
 
 	const getDataHistory = async () => {
 		let getHistory: any = await AsyncStorage.getItem(`${email}mySanitas`);
-		console.log('---getHistory----',getHistory)
 		getHistory = JSON.parse(getHistory);
 		const [todayD, otherD] = filterByDate(getHistory ?? [], new Date())
 		setTodayData(todayD ?? [])

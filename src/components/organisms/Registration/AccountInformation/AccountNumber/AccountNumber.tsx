@@ -46,9 +46,7 @@ const AccountNumber: React.FC<Props> = (props) => {
   const onValidSubmit = useCallback(
     async (values) => {
       try {
-        console.log("Los valores que se están yendo", values)
         const response = await verifyCodeEcw(values).unwrap();
-        console.log("lares puestica", response)
 
         switch (response?.cause) {
           case 'SUCCESS':

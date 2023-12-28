@@ -11,12 +11,15 @@ import { useAppDispatch, useAppSelector } from 'adapter/hooks';
 import { userSelectors } from 'adapter/user/userSelectors';
 import { Platform } from 'react-native';
 import moment from 'moment';
+import { useBottomSheet } from 'src/components/atoms/BottomSheetProvider/BottomSheetProvider';
+import ModalWarning from 'src/components/molecules/ModalWarning/ModalWarning';
 
 export const EnrollDeviceOption = () => {
 	const [getByEnrollDevices] =  enrollDeviceService.useGetByEnrollDevicesMutation();
 	const [deleteEnrollDevice] =  enrollDeviceService.useDeleteEnrollDeviceMutation();
 	const [getdevice, setGetdevice] = useState<any[]>([]);
 	const { ...valueUser } = useAppSelector(userSelectors.selectUser);
+	const { closeModal, setModal } = useBottomSheet();
 
 	const getData = async () => {
 		const state = valueUser.state; 
@@ -33,7 +36,7 @@ export const EnrollDeviceOption = () => {
 			setGetdevice(device)
 
 		  }).catch(errors => {
-			console.log({ errors })
+
 		  });
 	
 	  };
@@ -44,8 +47,8 @@ export const EnrollDeviceOption = () => {
 
 	  const handleIcon2Press = async (state: String, authUid: String, index: number) => {
 		try {
-		  await deleteEnrollDevice({ state, authUid }).unwrap();
-	  
+			await deleteEnrollDevice({ state, authUid }).unwrap();
+		  closeModal();
 		  const updatedDevices = [...getdevice];
 		  updatedDevices.splice(index, 1);
 		  setGetdevice(updatedDevices);
@@ -53,6 +56,35 @@ export const EnrollDeviceOption = () => {
 		  console.error(error);
 		}
 	  };
+
+	  const openModalEnrollDevice = (device: String, index:number) => {
+		setModal({
+			render: () => (
+				<ModalWarning
+					isIconAlert
+					styleSubtitle={{
+						fontSize: 14,
+						color: '#055293',
+						marginTop: 10,
+						fontFamily: 'Proxima Nova',
+						textAlign: 'center',
+					}}
+					warningText={t('notifications.deleteModalEnrollDevice')}
+					textButton={t('common.yes')}
+					textButtonCancel={t('common.no')}
+					styleBtnCancel={ [t('general.locale') == 'es' ? {width: 83} : {width: 90}]}
+					onPress={async () => {
+						handleIcon2Press(valueUser.state, device, index)
+					}}
+					onPressCancel={() => {
+						closeModal();
+					}}
+				/>
+			),
+			height: 320,
+			blockModal: true,
+		});
+	};
 	  
 	  
 
@@ -64,7 +96,7 @@ export const EnrollDeviceOption = () => {
 		<CardEnrollDevice
 			key={index}
 			icon={<MobileScreen />} 
-			onIcon2Press={() => handleIcon2Press(valueUser.state, device.uuid, index)}
+			onIcon2Press={() => openModalEnrollDevice( device.uuid, index)}
 			icon2={<DeleteDevice />}
 			title={device.deviceName}
 			text={Platform.OS == "android" ? 'Google Inc.' : 'Apple Inc.'}

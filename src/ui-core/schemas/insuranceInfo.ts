@@ -18,13 +18,13 @@ export const InsuranceInfoSchema: Yup.SchemaOf<PatientInsuranceInfo> = Yup.objec
 		.matches(REGEX.spaces, 'invalidName')
 		.required('required')
 		.min(2, 'min')
-		.max(50, 'max'),
+		.max(60, 'max'),
 	lastname_of_insured: Yup.string()
 		.matches(REGEX.lettersChars, 'invalidName')
 		.matches(REGEX.spaces, 'invalidName')
 		.required('required')
 		.min(2, 'min')
-		.max(50, 'max'),
+		.max(60, 'max'),
 	patient_relationship_to_insured: Yup.number().required('required'),
 	name_of_insuredH: Yup.string()
 		.matches(REGEX.lettersChars, 'invalidName')
@@ -34,7 +34,7 @@ export const InsuranceInfoSchema: Yup.SchemaOf<PatientInsuranceInfo> = Yup.objec
 				.matches(REGEX.lettersChars, 'invalidName')
 				.required('required')
 				.min(2, 'min')
-				.max(50, 'max'),
+				.max(60, 'max'),
 			otherwise: Yup.string().matches(REGEX.lettersChars, 'invalidName'),
 		}),
 	lastname_of_insuredH: Yup.string()
@@ -45,7 +45,7 @@ export const InsuranceInfoSchema: Yup.SchemaOf<PatientInsuranceInfo> = Yup.objec
 				.matches(REGEX.lettersChars, 'invalidName')
 				.required('required')
 				.min(2, 'min')
-				.max(50, 'max'),
+				.max(60, 'max'),
 			otherwise: Yup.string().matches(REGEX.lettersChars, 'invalidName'),
 		}),
 	dateOfBirthH: Yup.date().when('patient_relationship_to_insured', {
@@ -92,7 +92,7 @@ export const InsuranceInfoSchema: Yup.SchemaOf<PatientInsuranceInfo> = Yup.objec
 				.matches(REGEX.lettersChars, 'invalidName')
 				.required('required')
 				.min(2, 'min')
-				.max(50, 'max'),
+				.max(60, 'max'),
 		}),
 	lastname_of_insured2: Yup.string()
 		.matches(REGEX.lettersChars, 'invalidName')
@@ -103,7 +103,7 @@ export const InsuranceInfoSchema: Yup.SchemaOf<PatientInsuranceInfo> = Yup.objec
 				.matches(REGEX.lettersChars, 'invalidName')
 				.required('required')
 				.min(2, 'min')
-				.max(50, 'max'),
+				.max(60, 'max'),
 		}),
 	patient_relationship_to_insured2: Yup.number()
 		.notRequired()
@@ -123,7 +123,7 @@ export const InsuranceInfoSchema: Yup.SchemaOf<PatientInsuranceInfo> = Yup.objec
 				.matches(REGEX.lettersChars, 'invalidName')
 				.required('required')
 				.min(2, 'min')
-				.max(50, 'max'),
+				.max(60, 'max'),
 			otherwise: Yup.string().matches(REGEX.lettersChars, 'invalidName'),
 		}),
 	lastname_of_insuredH2: Yup.string()
@@ -138,7 +138,7 @@ export const InsuranceInfoSchema: Yup.SchemaOf<PatientInsuranceInfo> = Yup.objec
 				.matches(REGEX.lettersChars, 'invalidName')
 				.required('required')
 				.min(2, 'min')
-				.max(50, 'max'),
+				.max(60, 'max'),
 			otherwise: Yup.string().matches(REGEX.lettersChars, 'invalidName'),
 		}),
 	dateOfBirthH2: Yup.date()
@@ -166,5 +166,3 @@ export const InsuranceInfoSchema: Yup.SchemaOf<PatientInsuranceInfo> = Yup.objec
 		}),
 	group_id2: Yup.string(),
 });
-
-console.log('nada?==>¿¿¿', InsuranceInfoSchema.fields.is2ndInsurance);

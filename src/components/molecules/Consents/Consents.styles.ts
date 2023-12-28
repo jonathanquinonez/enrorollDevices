@@ -70,9 +70,8 @@ const styles = (colors: KeraltyColors) =>
       padding:0,
       color: colors.GRAYDC1,
       fontSize: 16,
-      fontFamily: 'proxima-regular',
+      fontFamily: 'proxima-bold',
       textAlign: 'left',
-      fontWeight: '700'
     },
     itemP: {
       color: colors.GRAYDC1,

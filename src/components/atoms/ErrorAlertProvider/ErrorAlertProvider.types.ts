@@ -8,5 +8,5 @@ export interface AlertErrorContextProps {
    * @since 1.0.0
    * @example setIsAlertError('Error message')
    */
-   setAlertErrorMessage: (satus: string, type?: 'error' | 'warning' | 'success' | 'successNotification') => void;
+   setAlertErrorMessage: (satus: string | null, type?: 'error' | 'warning' | 'success' | 'successNotification') => void;
 }

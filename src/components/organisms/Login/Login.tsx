@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-curly-brace-presence */
-import React, { useState, useCallback, useRef, useMemo } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { Buffer } from 'buffer';
 // Types, Styles
 import { LoginProps as Props } from './Login.types';
@@ -7,11 +7,10 @@ import HeaderLogin from 'src/components/molecules/HeaderLogin/HeaderLogin';
 import LoginForm from 'src/components/molecules/LoginForm/LoginForm';
 import Row from 'src/components/atoms/Row/Row';
 import AuthService from 'adapter/api/authService';
-import BubbleMenu from 'src/components/molecules/BubbleMenu/BubbleMenu';
 //
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTranslation } from 'react-i18next';
-import { View, Text, Dimensions, Image } from 'react-native';
+import { View, Text } from 'react-native';
 import { useErrorAlert } from 'src/components/atoms/ErrorAlertProvider/ErrorAlertProvider';
 import { SubmitCredentials } from 'src/components/molecules/LoginForm/LoginForm.types';
 import { ASYNC_STORAGE } from 'config/constants/Global';
@@ -21,20 +20,15 @@ import { twoFactorActions } from 'adapter/user/twoFactor/twoFactorSlice';
 import { useBottomSheet } from 'src/components/atoms/BottomSheetProvider/BottomSheetProvider';
 import ModalStates from 'src/components/molecules/ModalStates/ModalStates';
 import ModalWarning from 'src/components/molecules/ModalWarning/ModalWarning';
-import { CommonActions, useNavigation } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import { userSelectors } from 'adapter/user/userSelectors';
 import { TIMES_ZONES, getCustomDate } from 'src/utils/devices';
-import { ChatKeralty, Keraltyhandles } from '@quillbot/keralty-chat-mobile';
-import { stylesLogin } from './Login.styles';
-import { IconBubbleButton } from './BubbleButton/BubbleButton';
 
 /**
  * Render a login.
  * @since 2.0.0
  */
 const LoginOrganism = (props: Props) => {
-	const appImage = require('../../../../assets/images/bookAppoim.png');
-	const checkImage = require('../../../../assets/images/checksymp.png');
 	const [login] = AuthService.useLoginSecurityMutation();
 	const [doLoginAllStates] = AuthService.useDoLoginAllStatesMutation();
 	const [fetchVerifyEmailAndMobile] = AuthService.useFetchVerifyEmailAndMobileMutation();
@@ -282,8 +276,11 @@ const LoginOrganism = (props: Props) => {
 										...values.credentials,
 										state:
 											response?.data.length == 1 ? response?.data[0] : state,
-											isBiometric: values.type === 'biometrical' || values.type === 'biometricalUpdate' ? true : false,
-											
+										isBiometric:
+											values.type === 'biometrical' ||
+											values.type === 'biometricalUpdate'
+												? true
+												: false,
 									}).then(async (result: any) => {
 										if (result.data) {
 											if (result.data?.token == '-1') {
@@ -366,8 +363,6 @@ const LoginOrganism = (props: Props) => {
 		[isBubbleMenu],
 	);
 
-	const ref = React.useRef<Keraltyhandles>(null);
-
 	return (
 		<View style={{ flex: 1 }}>
 			<Row style={{ backgroundColor: '#034268' }}>
@@ -380,46 +375,6 @@ const LoginOrganism = (props: Props) => {
 					autoFocus={autoFocus}
 				/>
 			</Row>
-			<ChatKeralty
-				ref={ref}
-				baseUrl="https://mychatqa.mysanitas.com"
-				isPublic
-				language={t('general.locale')}
-				//    isActiveBubble
-				styleButtonBurger={{ top: Dimensions.get('screen').height * 0.8 }}
-				queue={'support'}
-				buttons={[
-					{
-						action: () => navigation.navigate('VimView'),
-						icon: (
-							<IconBubbleButton
-								source={appImage}
-								text={t('bobbleMenu.appointments')}
-							/>
-						),
-						title: t('bobbleMenu.appointments'),
-					},
-					/*	{
-						title: t('bobbleMenu.symptoms'),
-						icon: (
-							<IconBubbleButton source={checkImage} text={t('bobbleMenu.symptoms')} />
-						),
-						action: () => navigation.navigate('SymtomsView'),
-					},*/
-				]}
-				user={{
-					isPublic: true,
-					authuid: '',
-					currenttimezone: '',
-					datebirthday: '',
-					state: '',
-					sanitasAccountNumber: '',
-					gender: '',
-					mail: '',
-					token: '',
-					userName: '',
-				}}
-			/>
 			{/* 			{boobleState ? (
 				<BubbleMenu
 					openwarning={openwarning}

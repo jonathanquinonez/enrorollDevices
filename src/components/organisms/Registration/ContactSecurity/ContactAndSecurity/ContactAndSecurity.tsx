@@ -25,13 +25,15 @@ import verifyDomain from 'hooks/verifyDomain';
 import { windowDimentions } from 'ui-core/utils/globalStyles';
 import { validateNonRepeatingDomains } from 'ui-core/utils/validateNonRepeatingDomains';
 import { userSelectors } from 'adapter/user/userSelectors';
+import { useBottomSheet } from 'src/components/atoms/BottomSheetProvider/BottomSheetProvider';
+import ModalWarning from 'src/components/molecules/ModalWarning/ModalWarning';
 
 /**
  * Render a ContactAndSecurity.
  * @since 1.0.0
  */
 const ContactAndSecurity: React.FC<Props> = (props) => {
-	const { handleNext, accountInfo, resetForm } = props;
+	const { handleNext, accountInfo, resetForm, elegibilityData } = props;
 	const selectSSO = useAppSelector(userSelectors.selectSSO);
 	const { styles, colors } = useStyles(componentStyles);
 	const { t } = useTranslation();
@@ -42,12 +44,14 @@ const ContactAndSecurity: React.FC<Props> = (props) => {
 	const dispatch = useAppDispatch();
 	const { requestToken } = useVersion();
 	const { requestVerifyDomain } = verifyDomain();
+	const { closeModal, setModal } = useBottomSheet();
 
 	const {
 		control,
 		handleSubmit,
 		formState: { errors, isDirty },
 		setValue,
+		watch,
 		setError,
 		reset,
 	} = useForm<ContactSecurityCredentials>({
@@ -56,8 +60,30 @@ const ContactAndSecurity: React.FC<Props> = (props) => {
 	});
 
 	useEffect(() => {
+		if (elegibilityData?.cellphone) setValue('mobile', elegibilityData.cellphone);
+		if (elegibilityData?.email) setValue('email', elegibilityData.email);
+	}, [elegibilityData]);
+
+	useEffect(() => {
 		reset();
 	}, [resetForm]);
+
+	const showModalSSO = () => {
+		setModal({
+			render: () => (
+				<ModalWarning
+					isIconAlert
+					warningText={t(`login.ssoEmail.messageError`)}
+					textButton={t(`login.ssoEmail.btnError`)}
+					onPress={() => {
+						closeModal();
+					}}
+				/>
+			),
+			height: 320,
+			blockModal: true,
+		});
+	};
 
 	const { setAlertErrorMessage } = useErrorAlert();
 	const onValidSubmit = useCallback(
@@ -78,37 +104,37 @@ const ContactAndSecurity: React.FC<Props> = (props) => {
 				const notDomain = email.split('@')[1];
 				const responseTwo = await requestVerifyDomain(notDomain);
 				dispatch(loaderActions.setLoading(false));
-
 				if (responseTwo.data) {
 					const response = await validateAccountContactMethods({
 						...values,
 						...accountInfo,
 					}).unwrap();
-					if(response.matchEmail || response.matchPhone) {
-						if(selectSSO?.tokenFB != undefined && selectSSO?.tempUserSSO != undefined){
-							handleNext(
-								{
-									...values,
-									state: response?.state,
-									isFBMax: true,
-									id: selectSSO?.tempUserSSO
-								},
-								4,
-							)
-						}else{
-							handleNext(
-								{
-									...values,
-									state: response?.state,
-									isFBMax: !(response?.userId == 'NO_FB'),
-									id: response?.userId == 'NO_FB' ? '' : response?.userId,
-								},
-								4,
-							)
-						}
-					}else{
-						setAsyncError('190' as string);
+					// if (response.matchEmail || response.matchPhone) {
+					if (selectSSO?.tokenFB != undefined && selectSSO?.tempUserSSO != undefined) {
+						handleNext(
+							{
+								...values,
+								state: response?.state,
+								isFBMax: true,
+								id: selectSSO?.tempUserSSO,
+							},
+							4,
+						);
+					} else {
+						handleNext(
+							{
+								...values,
+								state: response?.state,
+								isFBMax: !(response?.userId == 'NO_FB'),
+								id: response?.userId == 'NO_FB' ? '' : response?.userId,
+							},
+							4,
+						);
 					}
+					// } else {
+					// 	alert('Entro Error');
+					// 	setAsyncError('190' as string);
+					// }
 					/*response.matchEmail || response.matchPhone
 						? handleNext(
 								{
@@ -126,8 +152,11 @@ const ContactAndSecurity: React.FC<Props> = (props) => {
 					});
 				}
 			} catch (error) {
-				dispatch(loaderActions.setLoading(false));
-				setAlertErrorMessage(t(`errors.code${error}`));
+				if (error === '20' && selectSSO.tempUserSSO) showModalSSO();
+				else {
+					dispatch(loaderActions.setLoading(false));
+					setAlertErrorMessage(t(`errors.code${error}`));
+				}
 			}
 		},
 		[validateAccountContactMethods, accountInfo],

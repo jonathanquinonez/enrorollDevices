@@ -1,38 +1,37 @@
 options:
-  substitution_option: ALLOW_LOOSE
-  
+    substitution_option: ALLOW_LOOSE
+
 steps:
-- name: 'gcr.io/cloud-builders/gcloud'
-  id: Generation Artifact IPA MAC
-  entrypoint: /bin/bash
-  args:
-  - -c
-  - |
+    - name: gcr.io/cloud-builders/git
+      args: ['fetch', '--unshallow']
 
-    security unlock-keychain -p $_PASS
-    apt-get update
-    apt-cache search sshpass
-    apt-get install sshpass
-    #ssh-keygen -b 2048 -t rsa -f /tmp/sshkey -q -N ""
-    echo 'Envio de llaves'
-    sshpass -p "$_PASS" scp -o stricthostkeychecking=no -r ".ssh/mac-ssh.pub" develop@74.91.11.86:/Users/develop/pipeline/.ssh
-    sshpass -p "$_PASS" scp -o stricthostkeychecking=no -r ".ssh/authorized_keys" develop@74.91.11.86:/Users/develop/pipeline/.ssh
-    echo Estado de conexion es $? , si es igual a cero conexion ssh exitoso..!! 
-    echo 'fin envio de llaves'
-    chmod 600 ./.ssh/mac-ssh
-    chmod 755 ./.ssh
-    eval `ssh-agent -s`
-    ssh-add ./.ssh/mac-ssh
-    ssh -tt develop@74.91.11.86 rm -rf /Users/develop/kdc-app
-    ssh -tt develop@74.91.11.86 'sh -x script_app.sh'
-    ssh -tt develop@74.91.11.86 'git clone https://source.developers.google.com/p/usa-kdc-devops-c034/r/kdc-app'
-    #ssh -tt develop@74.91.11.86 'gcloud source repos clone kdc-app --project=usa-kdc-devops-c034'
-    echo Rama $BRANCH_NAME  
-    ssh -tt develop@74.91.11.86 'cd /Users/develop/kdc-app/ && pwd && 'git checkout $BRANCH_NAME' && 'git pull origin $BRANCH_NAME' && 'dotnet restore''
-    ssh -tt develop@74.91.11.86 'bash --login -s' < .ssh/script.sh ${TAG_NAME} ${SHORT_SHA} ${_FIRESTORE_APP_ID} ${_ENV} $_FIRESTORE_GROUP
-            
+    - name: gcr.io/cloud-builders/npm
+      args: ['run', 'ar-login']
+      id: Install Dependencies
+      entrypoint: yarn
 
+    - name: 'gcr.io/cloud-builders/gcloud'
+      id: Generation Artifact IPA MAC
+      entrypoint: /bin/bash
+      args:
+          - -c
+          - |
 
-
-
-    
+              security unlock-keychain -p $_PASS
+              apt-get update
+              apt-cache search sshpass
+              apt-get install sshpass
+              #ssh-keygen -b 2048 -t rsa -f /tmp/sshkey -q -N ""
+              echo 'Envio de llaves'
+              sshpass -p "$_PASS" scp -o stricthostkeychecking=no -r ".ssh/mac-ssh.pub" develop@74.91.11.86:/Users/develop/pipeline/.ssh
+              sshpass -p "$_PASS" scp -o stricthostkeychecking=no -r ".ssh/authorized_keys" develop@74.91.11.86:/Users/develop/pipeline/.ssh
+              echo Estado de conexion es $? , si es igual a cero conexion ssh exitoso..!! 
+              echo 'fin envio de llaves'
+              chmod 600 ./.ssh/mac-ssh
+              chmod 755 ./.ssh
+              eval `ssh-agent -s`
+              ssh-add ./.ssh/mac-ssh
+              ssh -tt develop@74.91.11.86 'sh -x script_app.sh' 
+              ssh -tt develop@74.91.11.86 'sh -x /Volumes/Data/Keralty/Nativa/kdc-app/.ssh/cambio_version.sh' 
+              ssh -tt develop@74.91.11.86 "bash --login -c 'sh -x /Volumes/Data/Keralty/Nativa/kdc-app/.ssh/script2.sh ${TAG_NAME} ${SHORT_SHA} ${_FIRESTORE_APP_ID} ${_ENV} ${_FIRESTORE_GROUP}'"
+      timeout: 120s

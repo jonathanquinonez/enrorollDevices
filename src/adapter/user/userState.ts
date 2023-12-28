@@ -1,4 +1,5 @@
 import { SerializedError } from '@reduxjs/toolkit';
+import { PatientInformation } from 'domain/entities/tempFormUser';
 import { User } from 'domain/entities/user';
 import { NotificationsGeneral } from 'src/screens/Notifications/UtilNotifications';
 
@@ -27,50 +28,17 @@ export interface UserState extends User {
 	reloadUpcomingAppointments?: boolean;
 	statusMaintenance?: 'in_maintenance' | 'upcoming_maintenance' | 'no';
 	maintenanceData?: MaintenanceData;
-	vitalResults?: { date: any; data: string };
 	stateViewChat?: { stateView: boolean; queue: string };
 	tokenFB?: string;
 	tempUserSSO?: string;
+	vitalResults?: string;
+	tempEmailSSOEdited: boolean;
 	notificationsList?: NotificationsGeneral[];
 	tempDeleteNotification?: {
-		type: 'delete' | 'remindLater'
-		data: NotificationsGeneral,
-		status?: boolean
+		type: 'delete' | 'remindLater';
+		data: NotificationsGeneral;
+		status?: boolean;
 	};
-}
-
-type PatientInformation = {
-	address1?: string;
-	address2?: string;
-	city?: string;
-	dateOfBirth?: string;
-	email?: string;
-	emergencyContact?: boolean;
-	emergencyContactLastName?: string;
-	emergencyContactMobile?: string;
-	emergencyContactName?: string;
-	emergencyRelationship?: string;
-	employerName?: string;
-	employmentStatus?: string;
-	etnicity?: string;
-	firstName?: string;
-	genderIdentity?: string;
-	genderIdentityOther?: string;
-	homePhone?: string;
-	languagePreference?: string;
-	languagePreferenceOther?: string;
-	lastName?: string;
-	maritalStatus?: string;
-	mobile?: string;
-	race?: string;
-	raceOther?: string;
-	sex?: string;
-	sexualOrientiation?: string;
-	sexualOrientiationOther?: string;
-	ssn?: string;
-	state?: string;
-	workPhone?: string;
-	zipCode?: string;
 }
 
 interface MaintenanceData {

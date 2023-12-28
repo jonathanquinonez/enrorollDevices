@@ -16,7 +16,6 @@ import RenderHtml from 'react-native-render-html';
  */
 const ModalStinking = (props: Props) => {
 	const { onPress, title, quote, body } = props;
-	//console.log({ body });
 
 	const { styles } = useStyles(componentStyles);
 	const { t } = useTranslation();
@@ -60,7 +59,6 @@ const ModalStinking = (props: Props) => {
 	const renderHtmlQuote = {
 		html: quote,
 	};
-	//console.log({ renderHtmlBody, renderHtmlQuote, renderHtmlTitle });
 
 	return (
 		<View style={styles.container}>

@@ -36,6 +36,7 @@ const Input = (props: Props) => {
 		isActiveSearch,
 		setDisabled,
 		noShowError,
+		multiline = false,
 		showPasswordStrength, editable = true } =
 		props;
 	const { labelStyle, inputStyle, styleIcon, styleError, showStrength, onChangeText, onPressCheckbox, value, clearSearch, style2 } = props;
@@ -65,7 +66,7 @@ const Input = (props: Props) => {
 
 	const commonProps = useMemo(
 		() => ({
-			style: [styles.input, style2],
+			style: [styles.input, style2, multiline && styles.multilineInput],
 			placeholder,
 			keyboardType,
 			secureTextEntry: !!passwordInput && !isVisible,
@@ -136,6 +137,8 @@ const Input = (props: Props) => {
 								<TextInput
 									{...props}
 									{...commonProps}
+									multiline={multiline}  // Add this prop for multiline input
+									numberOfLines={multiline ? 2 : undefined}
 									onChangeText={(val) => {
 										setValue(val)
 										setCurrentValue(val);

@@ -1,9 +1,7 @@
-import baseConfig from './base.config.json';
-import development from './dev.config.json';
+import qal from './qa.config';
 import qa from './qa.config.json';
 import uat from './uat.config.json';
 import production from './prod.config.json';
-import nodeKeys from './node_keys.json';
 import Config from 'react-native-config';
 
 const getValues = (configObj: any, dataObj: any) => {
@@ -23,7 +21,6 @@ const getValues = (configObj: any, dataObj: any) => {
 
 const validateEnv = () => {
 	const envNode = Config.APP_ENV;
-	console.log('Environment', envNode?.toString());
 	switch (true) {
 		case envNode === 'dev':
 			return qa;

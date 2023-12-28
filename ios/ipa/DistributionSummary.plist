@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>mySanitas.ipa</key>
+	<array>
+		<dict>
+			<key>architectures</key>
+			<array>
+				<string>arm64</string>
+			</array>
+			<key>buildNumber</key>
+			<string>2.6.0.1_uat</string>
+			<key>certificate</key>
+			<dict>
+				<key>SHA1</key>
+				<string>5C96118D8DC04755035D7711D794CC7A8DFF2B0F</string>
+				<key>dateExpires</key>
+				<string>2/28/24</string>
+				<key>type</key>
+				<string>Apple Distribution</string>
+			</dict>
+			<key>entitlements</key>
+			<dict>
+				<key>application-identifier</key>
+				<string>229A2DXP3T.com.keralty.mysanitas</string>
+				<key>aps-environment</key>
+				<string>production</string>
+				<key>com.apple.developer.icloud-container-environment</key>
+				<string>Development</string>
+				<key>com.apple.developer.icloud-container-identifiers</key>
+				<array>
+					<string>iCloud.com.keralty.mysanitas</string>
+				</array>
+				<key>com.apple.developer.icloud-services</key>
+				<array>
+					<string>CloudDocuments</string>
+				</array>
+				<key>com.apple.developer.team-identifier</key>
+				<string>229A2DXP3T</string>
+				<key>com.apple.developer.ubiquity-container-identifiers</key>
+				<array>
+					<string>iCloud.com.keralty.mysanitas</string>
+				</array>
+				<key>com.apple.developer.ubiquity-kvstore-identifier</key>
+				<string>229A2DXP3T.com.keralty.mysanitas</string>
+				<key>get-task-allow</key>
+				<false/>
+			</dict>
+			<key>name</key>
+			<string>mySanitas.app</string>
+			<key>profile</key>
+			<dict>
+				<key>UUID</key>
+				<string>5b940a58-ec73-4e1a-af2a-8739c5afe964</string>
+				<key>dateExpires</key>
+				<string>2/28/24</string>
+				<key>name</key>
+				<string>iOS Team Ad Hoc Provisioning Profile: com.keralty.mysanitas</string>
+			</dict>
+			<key>team</key>
+			<dict>
+				<key>id</key>
+				<string>229A2DXP3T</string>
+				<key>name</key>
+				<string></string>
+			</dict>
+			<key>versionNumber</key>
+			<string>2.6.0.1_uat</string>
+		</dict>
+	</array>
+</dict>
+</plist>

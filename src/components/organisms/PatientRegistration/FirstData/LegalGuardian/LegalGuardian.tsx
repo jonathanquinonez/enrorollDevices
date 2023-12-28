@@ -14,6 +14,7 @@ import MobileAlt from 'icons/MobileAlt.svg';
 import MapMarkerAlt from 'icons/MapMarkerAlt.svg';
 import IconPharmacy from 'icons/Pharmacy.svg';
 import UserIcon from 'icons/User.svg';
+import IconEmployer from 'icons/employer.svg';
 import Button from 'src/components/atoms/Button/Button';
 import DatePicker, { DatePickerController } from 'src/components/atoms/DatePicker/DatePicker';
 import { LegalGuardianList, LegalGuardianProps, LegalGuardianYup } from './LegalGuardian.types';
@@ -32,9 +33,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import RegisterService from 'adapter/api/registerService';
 import { useBottomSheet } from 'src/components/atoms/BottomSheetProvider/BottomSheetProvider';
 import ModalWarning from 'src/components/molecules/ModalWarning/ModalWarning';
+import useConsents from 'hooks/useConsents';
 
 const LegalGuardian: React.FC<LegalGuardianProps> = (props) => {
-	const { handlerNext, setFirstData, getListOfPharmacies, listOfPharmacies } = props;
+	const { handlerNext, setFirstData, getListOfPharmacies, listOfPharmacies, selfValue } = props;
 	const [updateNamePharmacy, setUpdateNamePharmacy] = useState<boolean>(false);
 	const { navigate, reset } = useNavigation();
 
@@ -59,14 +61,37 @@ const LegalGuardian: React.FC<LegalGuardianProps> = (props) => {
 		getValues,
 		clearErrors,
 		setError,
+		watch,
 	} = useForm<LegalGuardianList>({
 		resolver: yupResolver(LegalGuardianYup),
 		mode: 'onSubmit',
 	});
 
 	useEffect(() => {
+		clearErrors();
+	}, [selfValue]);
+
+	const { employmentStatusOptions } = useConsents();
+
+	const employmentStatusRestrictions = ['1', '2'];
+
+	useEffect(() => {
 		getItemInfo();
-	}, []);
+		setValue(
+			'employmentStatus',
+			editAccountdata?.employmentStatus?.id == null
+				? editAccountdata?.user?.patientInformation?.employmentStatus
+				: editAccountdata?.employmentStatus?.id,
+		);
+		setValue(
+			'employerName',
+			editAccountdata?.employmentStatus?.id > 2 ? '' : editAccountdata?.employerName,
+		);
+		setValue(
+			'workPhone',
+			editAccountdata?.employmentStatus?.id > 2 ? '' : editAccountdata?.workPhone,
+		);
+	}, [selfValue]);
 
 	const getItemInfo = async () => {
 		const valuesMs = await AsyncStorage.getItem('resendsmsCode');
@@ -97,19 +122,22 @@ const LegalGuardian: React.FC<LegalGuardianProps> = (props) => {
 		}
 	}, [pharmacyType, authPharmacy2]);
 
-
 	const onValidSubmit = async (values: LegalGuardianList) => {
 		let info = {
 			tempSessionId: tempSessionId,
-			state: timeTemps.state,
+			state: timeTemps?.state,
 		};
-		const response = editAccountdata?.isNewVersion ? true : await verifyPartialRegister(info).unwrap();
+		const response = editAccountdata?.isNewVersion
+			? true
+			: await verifyPartialRegister(info).unwrap();
 		if (response == true) {
 			try {
-				let state = timeTemps.state;
-				let id = timeTemps.id == '' ? userTemp.id : timeTemps.id;
-				let isFBMax = timeTemps.isFBMax;
-				const timeConsents = editAccountdata?.isNewVersion ? 'SUCCESS' : await registerConsentsTime({ state, id, isFBMax }).unwrap();
+				let state = timeTemps?.state;
+				let id = timeTemps?.id == '' ? userTemp.id : timeTemps?.id;
+				let isFBMax = timeTemps?.isFBMax;
+				const timeConsents = editAccountdata?.isNewVersion
+					? 'SUCCESS'
+					: await registerConsentsTime({ state, id, isFBMax }).unwrap();
 				if (timeConsents !== 'SUCCESS') throw new Error('Expirado');
 				if (getValues('auth') != undefined) {
 					values.pharmacy = !authPharmacy2 ? '' : pharmacyType;
@@ -169,14 +197,23 @@ const LegalGuardian: React.FC<LegalGuardianProps> = (props) => {
 		}, 50);
 	};
 
+	useEffect(() => {
+		if (!employmentStatusRestrictions.includes(watch('employmentStatus') ?? '')) {
+		  setValue('employerName', '');
+		  clearErrors('employerName');
+		  setValue('workPhone', '');
+		  clearErrors('workPhone');
+		}
+	  }, [watch('employmentStatus')]);
+
 	return (
 		<>
 			<InputSelect
 				control={control}
 				error={errors.reason}
-				style={{ width: Dimensions.get('window').width * 0.85 }}
+				style={{ width: Dimensions.get('window').width * 0.9 }}
 				label={t('patientRegistration.reason')}
-				labelStyle={[styles.label, { marginTop: 20 }]}
+				labelStyle={[styles.label]}
 				items={[
 					{ key: 1, label: t('guarantorReason.underAge'), value: '1' },
 					{ key: 2, label: t('guarantorReason.disabilities'), value: '2' },
@@ -194,7 +231,7 @@ const LegalGuardian: React.FC<LegalGuardianProps> = (props) => {
 			/>
 			<InputSelect
 				icon={<UserIcon />}
-				style={{ width: Dimensions.get('window').width * 0.85 }}
+				style={{ width: Dimensions.get('window').width * 0.9 }}
 				labelStyle={styles.label}
 				label={`${t('patientRegistration.relationship')}*`}
 				items={patientRelationship.map((patientRelationhip, index) => {
@@ -215,6 +252,7 @@ const LegalGuardian: React.FC<LegalGuardianProps> = (props) => {
 			<Input
 				icon={<UserIcon />}
 				labelStyle={styles.label}
+				multiline={true}
 				inputStyle={styles.input}
 				placeholder={t('patientRegistration.placeholders.guarantorName')}
 				label={t('patientRegistration.guarantorName')}
@@ -226,6 +264,7 @@ const LegalGuardian: React.FC<LegalGuardianProps> = (props) => {
 				icon={<UserIcon />}
 				labelStyle={styles.label}
 				inputStyle={styles.input}
+				multiline={true}
 				placeholder={t('patientRegistration.placeholders.guarantorLast')}
 				label={t('patientRegistration.guarantorLast')}
 				name={'guarantorLast'}
@@ -251,7 +290,7 @@ const LegalGuardian: React.FC<LegalGuardianProps> = (props) => {
 				labelStyle={styles.label}
 				error={errors.dateOfBirth}
 				style={{ width: '85%', marginBottom: 0 }}
-				pikerStyle={{ width: Dimensions.get('window').width * 0.85 }}
+				pikerStyle={{ width: Dimensions.get('window').width * 0.9 }}
 			/>
 			<InputSelect
 				icon={<MapMarkerAlt />}
@@ -277,6 +316,7 @@ const LegalGuardian: React.FC<LegalGuardianProps> = (props) => {
 				placeholder={t('patientRegistration.placeholders.cityGuarantor')}
 				label={t('patientRegistration.city')}
 				name={'city'}
+				multiline={true}
 				control={control}
 				error={errors.city}
 			/>
@@ -296,6 +336,7 @@ const LegalGuardian: React.FC<LegalGuardianProps> = (props) => {
 				icon={<MapMarkerAlt />}
 				labelStyle={styles.label}
 				inputStyle={styles.input}
+				multiline={true}
 				placeholder={t('patientRegistration.placeholders.address')}
 				label={t('patientRegistration.address')}
 				name={'address'}
@@ -326,15 +367,62 @@ const LegalGuardian: React.FC<LegalGuardianProps> = (props) => {
 				control={control}
 				error={errors.mobile}
 			/>
+			<InputSelect
+				icon={<IconEmployer />}
+				control={control}
+				style={{ width: Dimensions.get('window').width * 0.9 }}
+				label={t('createAccount.inputs.employmentStatus')}
+				items={employmentStatusOptions}
+				placeholder={t('patientRegistration.placeholders.employmentStatus')}
+				onChange={(v, index) => {
+					const selectedItem =
+						index == 0 ? { value: '', label: '' } : employmentStatusOptions[index - 1];
+
+					setValue('employmentStatus', selectedItem.value);
+					setValue('employmentStatusLabel', selectedItem.label);
+				}}
+				name="employmentStatus"
+				error={errors.employmentStatus}
+				value={getValues('employmentStatus')}
+			/>
+			{employmentStatusRestrictions.includes(watch('employmentStatus') ?? '') && (
+				<>
+					<Input
+						control={control}
+						icon={<UserIcon />}
+						keyboardType="name-phone-pad"
+						inputStyle={styles.input}
+						placeholder={t('patientRegistration.placeholders.employerName')}
+						label={t('createAccount.inputs.employerName')}
+						name={'employerName'}
+						error={errors.employerName}
+						value={watch('employerName')}
+						multiline={true}
+					/>
+					<Input
+						control={control}
+						icon={<MobileAlt />}
+						keyboardType="numeric"
+						mask={MASK.phone}
+						inputStyle={styles.input}
+						placeholder={t('patientRegistration.placeholders.workPhone')}
+						label={t('createAccount.inputs.workPhone')}
+						name={'workPhone'}
+						error={errors.workPhone}
+						autoCorrect={false}
+						value={watch('workPhone')}
+					/>
+				</>
+			)}
 			<FileUpload
-				style={{ width: Dimensions.get('window').width * 0.85 }}
+				style={{ width: Dimensions.get('window').width * 0.9 }}
 				placeholder={t('createAccount.fileUpload.documentFile')}
 				helperText={t('createAccount.fileUpload.documentTypes')}
 				onChange={(v) => onchangeFile(v)}
 			/>
 			<View
 				style={{
-					width: Dimensions.get('window').width * 0.85,
+					width: Dimensions.get('window').width * 0.9,
 					alignItems: 'flex-start',
 					marginBottom: 20,
 				}}
@@ -364,7 +452,7 @@ const LegalGuardian: React.FC<LegalGuardianProps> = (props) => {
 				<View
 					style={{
 						marginBottom: 10,
-						width: Dimensions.get('window').width * 0.85,
+						width: Dimensions.get('window').width * 0.9,
 						alignSelf: 'center',
 						marginTop: -10,
 					}}
@@ -385,7 +473,7 @@ const LegalGuardian: React.FC<LegalGuardianProps> = (props) => {
 				icon={<IconPharmacy />}
 				labelStyle={styles.label}
 				disabled={authPharmacy2 === false}
-				style={{ width: Dimensions.get('window').width * 0.85 }}
+				style={{ width: Dimensions.get('window').width * 0.9 }}
 				inputStyle={
 					authPharmacy2 === false ? { backgroundColor: colors.GRAY_LIGHT_3 } : null
 				}
@@ -404,15 +492,15 @@ const LegalGuardian: React.FC<LegalGuardianProps> = (props) => {
 				value={updateNamePharmacy ? '' : undefined}
 			/>
 			<RadioGroup
-				style={{ width: Dimensions.get('window').width * 0.85, marginTop: 15 }}
+				style={{ width: Dimensions.get('window').width * 0.9, marginTop: 15 }}
 				onChange={(v) => {
 					if (v == 2) {
-                        setValue('pharmaCondition', false)
-                        clearErrors('pharmacy', "");
-                    } else {
-                        clearErrors('pharmacy', "");
-                        setValue('pharmaCondition', true)
-                    }
+						setValue('pharmaCondition', false);
+						clearErrors('pharmacy', '');
+					} else {
+						clearErrors('pharmacy', '');
+						setValue('pharmaCondition', true);
+					}
 					setAuthPharmacy2(v == 1 ? true : false);
 					setValue('auth', v == 1 ? true : false);
 					setError('auth', {});
@@ -436,7 +524,7 @@ const LegalGuardian: React.FC<LegalGuardianProps> = (props) => {
 				<View
 					style={{
 						marginBottom: 10,
-						width: Dimensions.get('window').width * 0.85,
+						width: Dimensions.get('window').width * 0.9,
 						alignSelf: 'center',
 						marginTop: -10,
 					}}

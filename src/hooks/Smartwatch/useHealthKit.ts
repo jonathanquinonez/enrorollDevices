@@ -38,7 +38,6 @@ const useHealthKit = () => {
 			{ ...options, limit: 10 },
 			(err, results) => {
 				if (err) {
-					console.log('Error al obtener la distancia caminada:', err);
 					setHealthValues((prevValues) => ({ ...prevValues, walkingDistance: [] }));
 					return;
 				}

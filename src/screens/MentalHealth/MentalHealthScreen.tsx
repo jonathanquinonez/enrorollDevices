@@ -26,7 +26,6 @@ export const MentalHealthScreen = () => {
 
   const onFinish = useCallback(async () => {
     try {
-      console.log('--->>>>>')
       await updateOnboardingByEmail({ email: userInfo.email, state: userInfo.state }).unwrap();
       closeModal();
     } catch (error) {

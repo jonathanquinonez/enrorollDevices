@@ -28,7 +28,7 @@ const ModalNewVersion: React.FC<Props> = (props) => {
             const link = 'itms-apps://apps.apple.com/id/app/mysanitas/id1600791076?l=id';
             Linking.canOpenURL(link).then(supported => {
                 supported && Linking.openURL(link);
-            }, (err) => console.log(err));
+            }, (err) => {});
             // closeModal();
         }else{
             const link = 'market://details?id=com.keralty.mysanitas'

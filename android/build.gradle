@@ -4,6 +4,7 @@ import org.apache.tools.ant.taskdefs.condition.Os
 
 buildscript {
     ext {
+        androidXCore="1.6.0"
 		kotlinVersion = "1.8.10"
         buildToolsVersion = findProperty('android.buildToolsVersion') ?: '33.0.0'
         minSdkVersion = Integer.parseInt(findProperty('android.minSdkVersion') ?: '21')

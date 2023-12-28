@@ -88,7 +88,6 @@ export const VitalSignForm = () => {
 			diabetes
 		}
 		const response: any = await NuralogixURL(requestVital);
-		console.log('---->>response---->>',response)
 		navigation.navigate('VitalSignScanner', { url: response.data?.nuralogixUrl })
 	}
 

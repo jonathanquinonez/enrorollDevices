@@ -304,7 +304,6 @@ export const GetCareOptions = () => {
 				handleShowModal(true);
 			}
 		} catch (error) {
-			console.log('el error', error);
 			setAlertErrorMessage(t(`errors.code${error}`));
 		}
 	}, [validateInsurance, authUid, locationSelected, token]);

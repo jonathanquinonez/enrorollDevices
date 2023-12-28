@@ -19,32 +19,29 @@ export interface ContactSecurityProps {
 		type: number;
 	};
 	/**
-	   * Method called after pressing continue button.
-	   * @since 1.0.0
-	   * @example value={() => {}}
-	   */
+	 * Method called after pressing continue button.
+	 * @since 1.0.0
+	 * @example value={() => {}}
+	 */
 	handleNext: (value: any, num: number) => void;
 	/**
-   	* Method to clean the form passing the time to update and clean the data
-   	* @example resetForm={new Date()}
-   	* @since  1.0.0
-   	*/
+	 * Method to clean the form passing the time to update and clean the data
+	 * @example resetForm={new Date()}
+	 * @since  1.0.0
+	 */
 	resetForm: Date;
 	accountInfo: ValidateAccountDTO;
 	elegibilityData: any | undefined;
 	openwarning: () => void;
-	statusMaintenance?: string; 
+	statusMaintenance?: string;
 }
 
 export const ContactSecurityInfo: Yup.SchemaOf<UserComplementaryInfo> = Yup.object().shape({
-	address1: Yup.string()
-		.required('required'),
-		//.max(11, 'max'),
-	address2: Yup.string()
-		.notRequired(),
-		//.max(11, 'max'),
-	city: Yup.string()
-		.required('required'),
+	address1: Yup.string().required('required').min(2, 'min').max(60, 'max'),
+	//.max(11, 'max'),
+	address2: Yup.string().min(2, 'min').max(60, 'max').notRequired(),
+	//.max(11, 'max'),
+	city: Yup.string().min(2, 'min').max(50, 'max').required('required'),
 	homePhone: Yup.string()
 		.notRequired()
 		.matches(REGEX.phone, { message: 'invalidPhone', excludeEmptyString: true }),
@@ -56,14 +53,10 @@ export const ContactSecurityInfo: Yup.SchemaOf<UserComplementaryInfo> = Yup.obje
 	ssn: Yup.string()
 		.nullable()
 		.notRequired()
-		.test('length', 'min', (x = '') => (x === null || x === '' || x.length === 11))
+		.test('length', 'min', (x = '') => x === null || x === '' || x.length === 11)
 		.max(11, 'max'),
-	terms: Yup.boolean()
-		.oneOf([true], 'required')
-		.required(),
-	policy: Yup.boolean()
-		.oneOf([true], 'required')
-		.required(),
+	terms: Yup.boolean().oneOf([true], 'required').required(),
+	policy: Yup.boolean().oneOf([true], 'required').required(),
 	pass: Yup.string()
 		.required('required')
 		.min(8, 'min')
@@ -84,7 +77,7 @@ export const ContactSecurityInfo: Yup.SchemaOf<UserComplementaryInfo> = Yup.obje
 	confirmPassword: Yup.string()
 		.required('required')
 		.oneOf([Yup.ref('pass')], 'passwordMatch'),
-	
+
 	emergencyContactName: Yup.string()
 		.required('required')
 		.min(2, 'min')
@@ -95,21 +88,23 @@ export const ContactSecurityInfo: Yup.SchemaOf<UserComplementaryInfo> = Yup.obje
 		.min(2, 'min')
 		.max(50, 'max')
 		.matches(REGEX.lettersChars, 'invalidName'),
-	emergencyContactMobile: Yup.string().required('required').matches(REGEX.phone, 'invalidPhone'),
-	emergencyRelationship: Yup.string()
+	emergencyContactMobile: Yup.string()
 		.required('required')
-		.min(2, 'min')
-		.max(60, 'max'),
+		.matches(REGEX.phone, 'invalidPhone')
+		.min(10, 'invalidPhone')
+		.max(5100, 'invalidPhone'),
+	emergencyRelationship: Yup.string().required('required'),
+	emergencyRelationshipOther: Yup.string().when('emergencyRelationship', {
+		is: (emergencyRelationship: number) =>
+			emergencyRelationship && emergencyRelationship == 'O',
+		then: Yup.string().required('required').min(5, 'min').max(50, 'max'),
+	}),
 	emergencyContact: Yup.boolean().required(),
 });
 
 export const ContactPasswordInfo: Yup.SchemaOf<UserConfirmCredentials> = Yup.object().shape({
-	terms: Yup.boolean()
-		.oneOf([true], 'required')
-		.required(),
-	policy: Yup.boolean()
-		.oneOf([true], 'required')
-		.required(),
+	terms: Yup.boolean().oneOf([true], 'required').required(),
+	policy: Yup.boolean().oneOf([true], 'required').required(),
 	pass: Yup.string()
 		.required('required')
 		.min(8, 'min')

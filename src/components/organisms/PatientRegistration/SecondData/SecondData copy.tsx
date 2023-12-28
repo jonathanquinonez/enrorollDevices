@@ -703,7 +703,7 @@ const SecondData: React.FC<SecondDataProps> = (props) => {
 								{ width: Dimensions.get('window').width * 0.85 },
 								!editable2 && { backgroundColor: '#e7e7e7' },
 							]}
-							placeholder={t('patientRegistration.subscriber')}s
+							placeholder={t('patientRegistration.subscriber')}
 							label={`${t('patientRegistration.subscriber')}*`}
 							control={control2}
 							error={errors2.subscriber_id2}

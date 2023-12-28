@@ -16,3 +16,8 @@ export enum ONBOARDING_VALUES {
 	SHOWN = 'SHOWN',
 	NOT_SHOWN = 'NOT_SHOWN',
 }
+
+export default {
+	FEATURE_NOTIFICATION: false,
+	FEATURE_ENROLLDEVICE: false,
+  };

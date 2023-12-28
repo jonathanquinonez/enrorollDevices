@@ -33,8 +33,6 @@ const CreateAccountPagination = React.forwardRef<FlatList, CreateAccountPaginati
 			props;
 		const bottomRef = useRef<FlatList>(null);
 
-		//console.log('values.hadSanitas --> ' , values.hadSanitas);
-
 		const updateIndexScroll = (ref: React.RefObject<FlatList<any>>, position: number) => {
 			ref.current?.scrollToIndex({
 				animated: true,
@@ -51,10 +49,8 @@ const CreateAccountPagination = React.forwardRef<FlatList, CreateAccountPaginati
 
 		const extraScrollHeight = extraScrollHeigth();
 
-		/* console.log('positionRef --> ' , positionRef);
-	console.log('currentPosition --> ' , currentPosition); */
-
 		const renderItem = ({ item }: { item: any }) => {
+			
 			return (
 				<KeyboardAwareScrollView
 					enableAutomaticScroll

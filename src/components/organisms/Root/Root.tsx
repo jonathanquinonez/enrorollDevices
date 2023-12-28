@@ -25,7 +25,6 @@ const RootOrganism = () => {
 
     const capitalName = firstName.charAt(0) + firstName.toLowerCase().substring(1)
 
-    console.log('firstname--->>', capitalName)
     return (
         <View style={{ flex: 1, width: '100%' }}>
             <Row style={{ paddingHorizontal: 30, paddingVertical: 10, justifyContent: 'center' }}>

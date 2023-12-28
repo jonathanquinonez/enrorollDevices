@@ -62,7 +62,6 @@ const VerifyCode: React.FC<Props> = (props) => {
                     "state": Object.keys(val?.idBelongState)[0],
                 };
                 const respCode = await sendCode(getData).unwrap();
-                console.log("lares puestica", respCode)
 
                 if (respCode?.tries) setNumberTries(respCode.tries)
 
@@ -245,7 +244,7 @@ const VerifyCode: React.FC<Props> = (props) => {
                 rootStyle={styles.codeFiledRoot}
                 keyboardType="numeric"
                 renderCell={({ index, symbol, isFocused }) => (
-                    <View style={[styles.cell, isFocused && styles.focusCell]}>
+                    <View key={`code-${index}`} style={[styles.cell, isFocused && styles.focusCell]}>
                         <Text
                             maxFontSizeMultiplier={1.3}
                             key={index}

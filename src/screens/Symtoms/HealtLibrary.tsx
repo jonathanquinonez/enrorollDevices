@@ -67,7 +67,7 @@ export const HealtLibrary = () => {
 	const handlingMessage = useCallback((event: WebViewMessageEvent) => {
 		const { data } = event.nativeEvent;
 		const message = JSON.parse(data);
-		console.log(message);
+
 		switch (message.type) {
 			case 'sensely_ok':
 				dispatch(loaderActions.setLoading(false));

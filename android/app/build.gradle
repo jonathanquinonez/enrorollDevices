@@ -298,6 +298,7 @@ dependencies {
     implementation "com.facebook.react:react-native:+"  // From node_modules
     implementation "androidx.appcompat:appcompat:1.4.1"
     implementation 'com.google.android.material:material:1.6.1'
+    implementation 'androidx.appcompat:appcompat-resources:1.6.1'
 
     def isGifEnabled = (findProperty('expo.gif.enabled') ?: "") == "true";
     def isWebpEnabled = (findProperty('expo.webp.enabled') ?: "") == "true";

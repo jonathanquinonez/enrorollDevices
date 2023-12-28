@@ -161,7 +161,6 @@ const DeleteAccountBody: React.FC<Props> = (props) => {
 	const Content2 = () => {
 		useEffect(() => {
 			const subcription = watch((data) => {
-				//console.log('data', data)
 				sendReason()
 			}
 			)

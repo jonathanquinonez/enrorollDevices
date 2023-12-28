@@ -19,6 +19,7 @@ import { PatientInfo } from 'domain/entities/patientInfo';
 import { validateAccountContact } from 'domain/entities/validateAccountContact';
 import { videoCallRegistry } from 'domain/entities/videoCallRegistry';
 import SecondData from 'src/components/organisms/PatientRegistration/SecondData/SecondData';
+import { ConsentsInfo } from 'domain/entities/consents';
 
 //
 
@@ -227,14 +228,11 @@ const registerMapper = {
 
 	// ------------------ Domain Object => Data Transfer Object ------------------ //
 	mapToFinalSave: (
-		domainObject: { isNewVersion: boolean, authUid:any, firstData: any, secondData: any, tempValues: any, email: boolean, phone: boolean, messagePush: boolean, isEnglish: boolean }
+		domainObject: ConsentsInfo
 	): FinalSaveDTO => {
 		const {
-			isNewVersion, authUid, email, firstData, phone, messagePush, secondData, tempValues, isEnglish
+			isNewVersion, authUid, email, firstData, phone, messagePush, secondData, tempValues, isEnglish, editAccountdata , consentHippa, signature
 		} = domainObject;
-
-		console.log("vamos===>", tempValues);
-
 
 		const isFBMax: boolean = tempValues?.firstName ? true : false;
 		let isFBMaxpatientInformation: any;
@@ -269,9 +267,9 @@ const registerMapper = {
 			id: tempValues.id ?? tempValues.tempId,
 			isFBMax: isFBMax,
 			externalPartyId: tempValues?.externalPartyId ?? tempValues?.idEcw ?? '',
-			signature: `${patientInformation.firstName} ${patientInformation.lastName}`,
+			signature,
 			isEnglish,
-			consentHippa: false,
+			consentHippa: consentHippa,
 			doYouHave: firstData?.doYouHave,
 			legalGuardianName: firstData?.legalGuardianName ?? '',
 			legalGuardianContacPhone: firstData?.legalGuardianContacPhone ?? '',
@@ -280,11 +278,7 @@ const registerMapper = {
 			emergencyContactName: firstData?.emergencyContactName ?? '',
 			emergencyContactLastName: firstData?.emergencyContactLastName ?? '',
 			emergencyContactMobile: firstData?.emergencyContactMobile ?? '',
-			emergencyRelationship: {
-				id: "1",
-				value: "Associate",
-				description: firstData?.emergencyRelationship ?? ''
-			},
+			emergencyRelationship: firstData?.emergencyRelationship,
 			familiarFriendOne: {
 				name: firstData?.nameFriendOne ?? '',
 				relationShip: firstData?.relationShipFriendOne ?? '',
@@ -295,10 +289,12 @@ const registerMapper = {
 				relationShip: firstData?.relationShipFriendTwo ?? '',
 				number: firstData?.numberFriendTwo ?? ''
 			},
-			
-			patientInformation: 
+
+			patientInformation:
 				{
 					...patientInformation,
+					address1: editAccountdata?.address1 ?? editAccountdata?.user?.patientInformation?.address1 ?? patientInformation.address1,
+					homePhone: editAccountdata?.homePhone ?? editAccountdata?.user?.patientInformation?.homePhone ?? patientInformation.homePhone,
 					genderIdentity: {
 						id: patientInformation?.genderIdentity,
 						value: patientInformation?.genderIdentityLabel == 'Otro' ? 'Other' : patientInformation?.genderIdentityLabel,
@@ -335,11 +331,7 @@ const registerMapper = {
 					emergencyContactName: firstData?.emergencyContactName ?? '',
 					emergencyContactLastName: firstData?.emergencyContactLastName ?? '',
 					emergencyContactMobile: firstData?.emergencyContactMobile ?? '',
-					emergencyContactRelationshipToThePatient: {
-						id: "1",
-						value: "Associate",
-						description: firstData?.emergencyRelationship ?? ''
-					},
+					emergencyContactRelationshipToThePatient: firstData?.emergencyRelationship,
 				} ?? '',
 			primaryInsuranceInformation: {
 				insuranceCompany: secondData.insuranceCompany ?? '',
@@ -382,6 +374,7 @@ const registerMapper = {
 				push: messagePush,
 			},
 		};
+
 		delete data.patientInformation?.genderIdentityLabel
 		delete data.patientInformation?.genderIdentityOther
 		delete data.patientInformation?.sexualOrientiationLabel
@@ -395,7 +388,7 @@ const registerMapper = {
 		delete data.patientInformation?.languagePreferenceLabel
 		delete data.patientInformation?.languagePreferenceOther
 		delete data.patientInformation?.employmentStatusLabel
-		delete data.patientInformation?.emergencyRelationship
+		// delete data.patientInformation?.emergencyRelationship
 		isNewVersion ? delete data?.id : delete data?.authUid
 
 		if (!data.patientInformation?.homePhone) delete data.patientInformation.homePhone
@@ -459,11 +452,12 @@ const registerMapper = {
 				workPhone: patientInformation?.workPhone,
 			}
 		}
+
 		return data;
 	},
 
 	mapEnrollDevice: (
-		{ authUid, state, tokenFCM, deviceName,deviceSOVersion }: EnrollDevice
+		{ authUid, state, tokenFCM, deviceName, deviceSOVersion }: EnrollDevice
 	): EnrollDevice => ({
 		patientInformation: {
 		}

@@ -28,6 +28,7 @@ export interface ConsentsList {
     accepted9: boolean,
     firm: string,
     date: Date,
+    consentHippa?:boolean,
 };
 
 export const ConsentsYup: Yup.SchemaOf<ConsentsList> = Yup.object().shape({
@@ -69,5 +70,8 @@ export const ConsentsYup: Yup.SchemaOf<ConsentsList> = Yup.object().shape({
         .min(3, 'min')
         .max(255, 'max'),
     date: Yup.date()
-    .required('required')
+    .required('required'),
+    consentHippa: Yup.boolean()
+    .nullable()
+    .notRequired()
 });

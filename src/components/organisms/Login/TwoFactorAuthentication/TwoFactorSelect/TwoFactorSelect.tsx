@@ -92,7 +92,6 @@ const TwoFactorSelect = (props: any) => {
           if(resp?.error) {
             throw Error(resp?.error + resp?.status);
           }
-          console.log("resp: ", resp);
 
           const { idTemp, attemps } = resp?.data;
           dispatch(twoFactorActions.setIdTempAndAttemps({idTemp, attemps, isEmail: sendByEmail}));

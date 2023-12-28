@@ -46,6 +46,11 @@ const styles = (colors: KeraltyColors) =>
       fontFamily: 'proxima-regular',
       top: 0,
       left: 0,
+      paddingTop: 12,
+      paddingBottom: 12
+    },
+    multilineInput: {
+      height: 50,
     },
   });
 

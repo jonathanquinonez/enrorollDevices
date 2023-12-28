@@ -17,7 +17,6 @@ const ChatSanitas = (props: any) => {
 	const navigation = useNavigation();
 	const webViewRef = useRef<any>(null);
 	const lang = i18n.language.includes('es') ? 'es' : 'en';
-	console.log('====================>',lang);
 	
 	const envNode = Config.APP_ENV;
 	const [currentTimeZone,setCurrentTimeZone] = useState('')
@@ -43,7 +42,6 @@ const ChatSanitas = (props: any) => {
 	let birthday: string='';
 	let currenTimeZone = '';
 	let state: string | undefined= '';
-	console.log({cyType})
 
 	const logChat = async(data: string) => {
 		//Add event Analitycs only english for reports

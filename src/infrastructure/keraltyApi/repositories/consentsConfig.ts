@@ -19,6 +19,8 @@ const ConsentsConfig = {
 		({ method: 'get', url: `guarantorEmployment/${language}` }),
 	getDoYouHave: (language: string): Endpoint =>
 		({ method: 'get', url: `doYouHave/${language}` }),
+	getEmergencyContact: (language: string): Endpoint =>
+		({ method: 'get', url: `emergency-contact/${language}` }),
 };
 
 export default ConsentsConfig;

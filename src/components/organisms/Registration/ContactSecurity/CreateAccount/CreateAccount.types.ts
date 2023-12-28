@@ -1,5 +1,5 @@
 import { UserComplementaryInfo } from "domain/entities/userComplementaryInfo"
-import { Control, FieldErrorsImpl } from "react-hook-form"
+import { Control, FieldErrorsImpl, UseFormGetValues, UseFormWatch } from "react-hook-form"
 
 /**
  * @interface CreateAccountProps
@@ -16,4 +16,6 @@ export interface CreateAccountProps {
      errors :  any;
      elegibilityData: any | undefined
      setValue?: any;
+     getValues: UseFormGetValues<UserComplementaryInfo>;
+     watch: UseFormWatch<UserComplementaryInfo>
 }

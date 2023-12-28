@@ -48,15 +48,16 @@ export const UserInf: Yup.SchemaOf<CreateUser> = Yup.object().shape({
 	raceLabel: Yup.string(),
 	languagePreferenceLabel: Yup.string(),
 
+	//Se ajusta el maximo de caracteres solicitado en la HU
 	firstName: Yup.string()
 		.required('required')
 		.min(2, 'min')
-		.max(50, 'max')
+		.max(60, 'max')
 		.matches(REGEX.lettersChars, 'invalidName'),
 	lastName: Yup.string()
 		.required('required')
 		.min(2, 'min')
-		.max(50, 'max')
+		.max(60, 'max')
 		.matches(REGEX.lettersChars, 'invalidName'),
 	email: Yup.string().lowercase().required('required').matches(REGEX.email, 'invalidEmail'),
 	mobile: Yup.string().required('required').matches(REGEX.phone, 'invalidPhone'),
@@ -67,38 +68,44 @@ export const UserInf: Yup.SchemaOf<CreateUser> = Yup.object().shape({
 	genderIdentity: Yup.string().required('required'),
 	genderIdentityOther: Yup.string().when('genderIdentity', {
 		is: (genderIdentity: string) => genderIdentity && genderIdentity.trim() === 'O',
-		then: Yup.string().required('required').min(5, 'min')
-		.max(50, 'max'),
+		then: Yup.string().required('required').min(5, 'min').max(50, 'max'),
 	}),
 	sexualOrientiation: Yup.string().required('required'),
 	sexualOrientiationOther: Yup.string().when('sexualOrientiation', {
 		is: (sexualOrientiation: string) => sexualOrientiation && sexualOrientiation.trim() === 'O',
-		then: Yup.string().required('required').min(5, 'min')
-		.max(50, 'max'),
+		then: Yup.string().required('required').min(5, 'min').max(50, 'max'),
 	}),
 	etnicity: Yup.string().required('required'),
 	race: Yup.string().required('required'),
 	raceOther: Yup.string().when('race', {
 		is: (race: string) => race && race.trim() == 'O',
-		then: Yup.string().required('required').min(5, 'min')
-		.max(50, 'max'),
+		then: Yup.string().required('required').min(5, 'min').max(50, 'max'),
 	}),
 	languagePreference: Yup.string().required('required'),
 	languagePreferenceOther: Yup.string().when('languagePreference', {
 		is: (languagePreference: string) => languagePreference && languagePreference.trim() === 'O',
-		then: Yup.string().required('required').min(5, 'min')
-		.max(50, 'max'),
+		then: Yup.string().required('required').min(5, 'min').max(50, 'max'),
 	}),
 	maritalStatus: Yup.string().required('required'),
 	maritalStatusOther: Yup.string().when('maritalStatus', {
 		is: (maritalStatus: string) => maritalStatus && maritalStatus.trim() === 'O',
-		then: Yup.string().required('required').min(5, 'min')
-		.max(50, 'max'),
+		then: Yup.string().required('required').min(5, 'min').max(50, 'max'),
 	}),
 	employmentStatus: Yup.string().required('required'),
 	employerName: Yup.string().matches(REGEX.lettersChars, 'invalidName').max(60, 'max'),
 	workPhone: Yup.string().when([], {
 		is: (workPhone: string) => workPhone && workPhone.trim() !== '',
-		then: Yup.string().matches(REGEX.phone, 'invalidPhone'),
+		then: Yup.string().matches(REGEX.phone, 'invalidPhone').min(10, 'invalidPhone')
+		.max(10, 'invalidPhone'),
 	}),
+	// employerName: Yup.string().when('employmentStatus', {
+	// 	is: (employmentStatus: string) => employmentStatus === '1' || employmentStatus === '2',
+	// 	then: Yup.string().required('required').matches(REGEX.lettersChars, 'invalidName').max(60, 'max'),
+	// 	otherwise: Yup.string().notRequired(),
+	//   }),
+	//   workPhone: Yup.string().when('employmentStatus', {
+	// 	is: (employmentStatus: string) => employmentStatus === '1' || employmentStatus === '2',
+	// 	then: Yup.string().required('required').matches(REGEX.phone, 'invalidPhone'),
+	// 	otherwise: Yup.string().notRequired(),
+	//   }),
 });

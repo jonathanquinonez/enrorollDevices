@@ -25,6 +25,8 @@ export type UserInformationEdit = {
 	authUid?: string;
 	city?: string;
 	employmentStatus?: string;
+	employerName?: string;
+	workPhone?: string;
 	etnicity?: string;
 	genderIdentity?: string;
 	genderIdentityOther?: string;
@@ -46,6 +48,8 @@ export type UserInformationEdit = {
 	raceLabel?: string;
 	languagePreferenceLabel?: string;
 	employmentStatusLabel?: string;
+	employerName?: string
+	workPhone?: string
 };
 
 

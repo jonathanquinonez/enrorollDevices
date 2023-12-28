@@ -54,7 +54,7 @@ const FirstData: React.FC<FirstProps> = (props) => {
 						fontFamily: 'proxima-bold',
 						marginTop: 5,
 						marginBottom: -5,
-                        marginLeft: -1
+						marginLeft: -1,
 					}}
 				>
 					{t('consents.requiredFields')}
@@ -69,14 +69,14 @@ const FirstData: React.FC<FirstProps> = (props) => {
 						onPress={() => changeValue(1)}
 						textStyle={styles.text}
 						style={styles.radioButton}
-						title={t('createAccount.patientRelationship.patientSelf')} 
+						title={t('createAccount.patientRelationship.patientSelf')}
 					/>
 					<RadioButton
 						accessibilityRole="radio"
 						isSelected={!value}
 						onPress={() => changeValue(2)}
 						textStyle={styles.text}
-						style={styles.radioButton, {marginLeft:15}}
+						style={(styles.radioButton, { marginLeft: 15 })}
 						title={t('patientRegistration.legal')}
 					/>
 				</View>
@@ -92,6 +92,7 @@ const FirstData: React.FC<FirstProps> = (props) => {
 					getListOfPharmacies={handlerData}
 					handlerNext={handlerNext}
 					setFirstData={(values) => setFirstData({ ...values, self: value })}
+					selfValue={value}
 				/>
 			</View>
 			<View
@@ -105,6 +106,7 @@ const FirstData: React.FC<FirstProps> = (props) => {
 					getListOfPharmacies={handlerData}
 					handlerNext={handlerNext}
 					setFirstData={(values) => setFirstData({ ...values, self: value })}
+					selfValue={value}
 				/>
 			</View>
 		</View>

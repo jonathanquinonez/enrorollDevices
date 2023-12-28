@@ -33,7 +33,6 @@ const useHealthValues = () => {
 					const values = consolidateWeek(mergedData.steps);
 					setHealthValues((prevValues) => ({ ...prevValues, dailySteps: values }));
 				} else {
-					console.log('No se encontraron pasos en los datos fusionados');
 					setHealthValues((prevValues) => ({ ...prevValues, dailySteps: [] }));
 				}
 			})

@@ -72,7 +72,7 @@ const PatientRegisPagination = React.forwardRef<FlatList, PatientRegisPagination
                             onPress={handlerBack}
                             title={t('patientRegistration.back')}
                             style={{
-                                paddingHorizontal: lng == 'es' ? currentPosition == 1 && 22  : currentPosition == 1 ? 38 : 34,
+                                paddingHorizontal: currentPosition === 1 ? (lng === 'es' ? 22 : 38) : 34,
                                 backgroundColor: "#F5F5F5",
                                 borderColor: "#0069A7",
                                 borderWidth: 1,

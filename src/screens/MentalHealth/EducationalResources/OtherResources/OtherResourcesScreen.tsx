@@ -55,11 +55,9 @@ export const OtherResourcesScreen = () => {
 				FileViewer.open(fileUri, { showOpenWithDialog: true, showAppsSuggestions: true })
 					.then(() => {
 						// success
-						console.log("File is opened")
 					})
 					.catch(error => {
 						// error
-						console.log("Error in file", error)
 					})
 			}
 		);

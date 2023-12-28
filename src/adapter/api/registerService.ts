@@ -8,6 +8,7 @@ import AuthConfig, { authEndpoint } from 'infrastructure/keraltyApi/repositories
 import { validateAccountContact } from 'domain/entities/validateAccountContact';
 import { videoCallRegistry } from 'domain/entities/videoCallRegistry';
 import { AvailityCoverage, AvailityCoverageInsurance, ParametersHint, ParametersPartialRecord, ParamsConsents, ReSendRecoverEmailInitialSave, TriesToBlock, Validateviacode } from 'infrastructure/keraltyApi/models/auth';
+import { ConsentsInfo } from 'domain/entities/consents';
 //
 
 export const registerApi = createApi({
@@ -89,12 +90,12 @@ export const registerApi = createApi({
 			query: (data: any) => AuthConfig.loadMaxUserInfoSSO(data),
 			transformResponse: (response) => registerMapper.mapFromLoadMaxUserInfo(response)
 		}),
-		finalSave: build.mutation<any, { isNewVersion:boolean, authUid:any, firstData: any, secondData: any, tempValues: any, email: boolean, phone: boolean, messagePush: boolean, isEnglish: boolean }>({
+		finalSave: build.mutation<any, ConsentsInfo>({
 			query: (data) => AuthConfig.finalSave(
 				registerMapper.mapToFinalSave(data)
 			)
 		}),
-		updateConsents: build.mutation<any, { isNewVersion:boolean,  authUid:any, firstData: any, secondData: any, tempValues: any, email: boolean, phone: boolean, messagePush: boolean, isEnglish: boolean }>({
+		updateConsents: build.mutation<any, ConsentsInfo>({
 			query: (data) => AuthConfig.updateConsents(
 				registerMapper.mapToFinalSave(data)
 			)

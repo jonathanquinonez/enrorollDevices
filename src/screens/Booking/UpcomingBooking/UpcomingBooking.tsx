@@ -50,7 +50,6 @@ export const UpcomingBookingScreen = () => {
 							? { ...item, newStatus: t('appoiment.archive') }
 							: { ...item, newStatus: '' };
 				});
-				console.log("Upcoming appointments ==>", newData);
 				setShowData(newData);
 				setData(newData);                
 			}

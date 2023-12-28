@@ -10,7 +10,7 @@ const supportedURL = "https://www.mysanitas.com/en/legal/privacy-policy";
 const TermsConditionsForm = () => {
   const { styles, colors } = useStyles(componentStyles);
   const { t } = useTranslation();
-  const [isEn, setIsEn] = useState(true)
+  const [isEn, setIsEn] = useState(t('general.locale') == 'en' ? true : false)
 
   const handlePressMail = (async () => {
     await Linking.openURL('mailto:supportservices@mySanitas.com')

@@ -261,7 +261,7 @@ const VerifyMessage = (props: Props) => {
                 rootStyle={styles.codeFiledRoot}
                 keyboardType="numeric"
                 renderCell={({ index, symbol, isFocused }) => (
-                    <View style={[styles.cell, isFocused && styles.focusCell]}>
+                    <View key={`code-${index}`} style={[styles.cell, isFocused && styles.focusCell]}>
                         <Text
                             maxFontSizeMultiplier={1.3}
                             key={index}

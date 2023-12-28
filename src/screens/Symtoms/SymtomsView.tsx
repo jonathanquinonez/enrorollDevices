@@ -52,7 +52,7 @@ export const SymtomsView = (props: any) => {
 			let response = await requestTokenize(token as string, body);
 			setAccessToken(response.data.access_token);
 		} catch (error) {
-			console.log('error ->', error);
+
 		}
 	};
 
@@ -78,7 +78,6 @@ export const SymtomsView = (props: any) => {
 	`;
 
 	const validateAction = async (menuAction: string) => {
-		console.log('--_>>menuAction', menuAction);
 		switch (true) {
 			case menuAction === 'bookappointment':
 				await analytics().logEvent('text', { data: 'Book appointment' });
@@ -109,7 +108,6 @@ export const SymtomsView = (props: any) => {
 		const { data } = event.nativeEvent;
 		const message = JSON.parse(data);
 
-		console.log('message--..>', message);
 		switch (message.type) {
 			case 'sensely_ok':
 				dispatch(loaderActions.setLoading(false));

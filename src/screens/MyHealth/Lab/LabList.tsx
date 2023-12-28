@@ -114,11 +114,9 @@ export const LabList: React.FC<IDataLab> = (props) => {
 						nameItem = nameItem.replaceAll("/", "_")
 						if (item.type == "DI") {
 							let finalDI: string = nameforDiagnosticIos + "_" + nameItem + "_" + date;
-							console.log("final di", finalDI)
 							savepdfToFilesystem(response, finalDI);
 						} else {
 							let finalLab: string = nameForLaboratoryIos + "_" + nameItem + "_" + date;
-							console.log("final lab", finalLab)
 							savepdfToFilesystem(response, finalLab);
 						}
 
@@ -128,7 +126,6 @@ export const LabList: React.FC<IDataLab> = (props) => {
 				});
 		} catch (error) {
 			openModal();
-			console.log(error);
 		}
 	};
 
@@ -140,11 +137,9 @@ export const LabList: React.FC<IDataLab> = (props) => {
 			FileViewer.open(fileUri, { showOpenWithDialog: true, showAppsSuggestions: true })
 				.then(() => {
 					// success
-					console.log('File is opened');
 				})
 				.catch((error) => {
 					// error
-					console.log('Error in file', error);
 				});
 		});
 	};

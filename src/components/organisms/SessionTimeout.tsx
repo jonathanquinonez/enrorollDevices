@@ -8,7 +8,7 @@ import { modalPayments } from 'src/components/atoms/ModalPaymentsProvider/ModalP
 
 import useLogout from 'hooks/useLogout';
 
-export let TIME_EXPIRATION_MIN = 10;
+export let TIME_EXPIRATION_MIN = 5;
 export const TIME_EXPIRATION_ADVICE = 1;
 export let MINUTE = 60000;
 //export let MINUTE = 1000;
@@ -29,7 +29,6 @@ const SessionTimeout = (props: { eventState: any }) => {
 
     // check
     let timeChecker = useCallback(() => {
-        console.log('** timeChecker **', isPaymentProcess);
         timeOutInit.current = setInterval(async () => {
             timeLogout();
             openModal();
@@ -37,7 +36,6 @@ const SessionTimeout = (props: { eventState: any }) => {
     }, [isPaymentProcess])
 
     let timeLogout = useCallback(() => {
-        console.log('** timeLogout **', isPaymentProcess);
         timeOutLogout.current = setTimeout(async () => {
             resetTimers();
             openModalLogOut();
@@ -45,13 +43,11 @@ const SessionTimeout = (props: { eventState: any }) => {
     }, [isPaymentProcess])
 
     let resetTimers = () => {
-        // console.log('** resetTimers **');
         clearTimeout(timeOutLogout.current);
         clearTimeout(timeOutInit.current);
     }
 
     useEffect(() => {
-        //console.log('** useEffect **');
         resetTimers();
         if (isAuthenticated) {
             timeChecker();
@@ -82,7 +78,7 @@ const SessionTimeout = (props: { eventState: any }) => {
                 height: 350
             });
         } catch (error) {
-            console.log("Error in show modal TimeOut")
+
         }
     }
 
@@ -96,7 +92,7 @@ const SessionTimeout = (props: { eventState: any }) => {
                 blockModal: true
             });
         } catch (error) {
-            console.log("Error in show modal ModalLogOut (TimeOut)")
+
         }
     }
 
